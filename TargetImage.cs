@@ -315,7 +315,16 @@ public partial class TargetImage : Sprite2D
             (GetParent() as Node2D).Position = GetViewport().GetVisibleRect().Size / 2 - new Vector2(127, -19);
             Input.ActionRelease("Maximize");
         }
-        ZoomIn = Mathf.Clamp(ZoomIn + (Input.GetAxis("Zoom Out", "Zoom In") * 10 * (float)delta), 0.05f, float.PositiveInfinity);
+        float Multiplier = 1;
+        if (Size.X > Size.Y)
+        {
+            Multiplier = 1024 / Size.X;
+        }
+        else
+        {
+            Multiplier = 1024 / Size.Y;
+        }
+        ZoomIn = Mathf.Clamp(ZoomIn + (Input.GetAxis("Zoom Out", "Zoom In") * 10 * (float)delta * Multiplier), 0.05f, float.PositiveInfinity);
         Scale = new(ZoomIn, ZoomIn);
         // Position += Input.GetVector("ui_right", "ui_left", "ui_down", "ui_up") * (float)delta * 320 * ZoomIn;
 
@@ -512,7 +521,16 @@ public partial class TargetImage : Sprite2D
         }
         else if (@event is InputEventMouseButton)
         {
-            ZoomIn = Mathf.Clamp(ZoomIn + (Input.GetAxis("Zoom Out", "Zoom In") * 0.05f), 0.05f, float.PositiveInfinity);
+            float Multiplier = 1;
+            if (Size.X > Size.Y)
+            {
+                Multiplier = 1024 / Size.X;
+            }
+            else
+            {
+                Multiplier = 1024 / Size.Y;
+            }
+            ZoomIn = Mathf.Clamp(ZoomIn + (Input.GetAxis("Zoom Out", "Zoom In") * 0.05f * Multiplier), 0.05f, float.PositiveInfinity);
         }
         base._Input(@event);
     }
