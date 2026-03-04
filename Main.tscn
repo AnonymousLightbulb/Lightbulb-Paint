@@ -426,7 +426,7 @@ layout_mode = 2
 [node name="Area2D" type="Area2D" parent="." unique_id=1985431213]
 position = Vector2(762, 512)
 
-[node name="Image" type="Sprite2D" parent="Area2D" unique_id=1614788159 node_paths=PackedStringArray("BG", "DrawSize", "R", "G", "B", "A", "Hex", "H", "S", "V", "ColorDisplay", "LayerSelector", "UiBounds", "FileMenuButton", "ExportMenu", "LoadMenu", "Resize")]
+[node name="Image" type="Sprite2D" parent="Area2D" unique_id=1614788159 node_paths=PackedStringArray("BG", "DrawSize", "R", "G", "B", "A", "Hex", "H", "S", "V", "ColorDisplay", "LayerSelector", "UiBounds", "FileMenuButton", "ExportMenu", "LoadMenu", "New", "NewX", "NewY")]
 texture = SubResource("PlaceholderTexture2D_uu6xs")
 script = ExtResource("2_uu6xs")
 BG = NodePath("../../Mask/BG")
@@ -446,14 +446,9 @@ UiBounds = [NodePath("../../Panel"), NodePath("../../Panel2")]
 FileMenuButton = NodePath("../../Panel2/MarginContainer/ScrollContainer/HBoxContainer/MenuButton")
 ExportMenu = NodePath("../../Export")
 LoadMenu = NodePath("../../Load")
-Resize = NodePath("../../Size")
-
-[node name="Line2D" type="Line2D" parent="Area2D/Image" unique_id=484471420]
-visible = false
-points = PackedVector2Array(-15, -25, 16, -41, 35, -10, 8, 43, -21, 33, -35, 25, -40, -3, -37, -19, -17, -24)
-closed = true
-width = 1.0
-default_color = Color(0.6507289, 1, 0.6507289, 0.75000006)
+New = NodePath("../../New")
+NewX = NodePath("../../New/Control/X")
+NewY = NodePath("../../New/Control/Y")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=765190329]
 shape = SubResource("RectangleShape2D_3dxm6")
@@ -519,7 +514,7 @@ access = 2
 filters = PackedStringArray("*.png", "*.jpeg", "*.webp", "*.dds", "*.exr")
 use_native_dialog = true
 
-[node name="Size" type="PanelContainer" parent="." unique_id=2013941264]
+[node name="New" type="PanelContainer" parent="." unique_id=2013941264]
 visible = false
 layout_mode = 1
 anchors_preset = -1
@@ -532,16 +527,16 @@ offset_top = -40.960003
 offset_right = 200.0
 offset_bottom = 40.039997
 
-[node name="Control" type="Control" parent="Size" unique_id=163375655]
+[node name="Control" type="Control" parent="New" unique_id=163375655]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Size/Control" unique_id=1018066054]
+[node name="Label" type="Label" parent="New/Control" unique_id=1018066054]
 layout_mode = 0
 offset_right = 62.0
 offset_bottom = 22.0
 text = "Size X:"
 
-[node name="X" type="HSlider" parent="Size/Control" unique_id=325564410 node_paths=PackedStringArray("Display")]
+[node name="X" type="HSlider" parent="New/Control" unique_id=325564410 node_paths=PackedStringArray("Display")]
 layout_mode = 1
 offset_top = 22.0
 offset_right = 392.0
@@ -550,21 +545,21 @@ max_value = 65535.0
 script = ExtResource("2_r0du0")
 Display = NodePath("../Label2")
 
-[node name="Label2" type="Label" parent="Size/Control" unique_id=1743931027]
+[node name="Label2" type="Label" parent="New/Control" unique_id=1743931027]
 layout_mode = 0
 offset_left = 65.0
 offset_right = 392.0
 offset_bottom = 22.0
 text = "0"
 
-[node name="Label3" type="Label" parent="Size/Control" unique_id=1977448551]
+[node name="Label3" type="Label" parent="New/Control" unique_id=1977448551]
 layout_mode = 0
 offset_top = 41.0
 offset_right = 192.0
 offset_bottom = 63.0
 text = "Size Y:"
 
-[node name="Y" type="HSlider" parent="Size/Control" unique_id=36926048 node_paths=PackedStringArray("Display")]
+[node name="Y" type="HSlider" parent="New/Control" unique_id=36926048 node_paths=PackedStringArray("Display")]
 layout_mode = 1
 offset_top = 63.0
 offset_right = 392.0
@@ -573,13 +568,20 @@ max_value = 65535.0
 script = ExtResource("2_r0du0")
 Display = NodePath("../Label4")
 
-[node name="Label4" type="Label" parent="Size/Control" unique_id=1374260262]
+[node name="Label4" type="Label" parent="New/Control" unique_id=1374260262]
 layout_mode = 0
 offset_left = 65.0
 offset_top = 41.0
 offset_right = 392.0
 offset_bottom = 63.0
 text = "0"
+
+[node name="Create New Image" type="Button" parent="New/Control" unique_id=1675780965]
+layout_mode = 0
+offset_top = 81.0
+offset_right = 400.0
+offset_bottom = 111.0
+text = "Create New Image"
 
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer/Red" to="Area2D/Image" method="SliderChanger"]
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer/Green" to="Area2D/Image" method="SliderChanger"]
@@ -591,3 +593,4 @@ text = "0"
 [connection signal="text_submitted" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/LineEdit" to="Area2D/Image" method="HexChanger"]
 [connection signal="file_selected" from="Export" to="Area2D/Image" method="Save"]
 [connection signal="file_selected" from="Load" to="Area2D/Image" method="Load"]
+[connection signal="pressed" from="New/Control/Create New Image" to="Area2D/Image" method="NewFromSize"]

@@ -6,7 +6,7 @@ using System.Linq;
 
 public partial class TargetImage : Sprite2D
 {
-    public Vector2I Size = new(1024, 1024);
+    public Vector2I Size = new(1024, 512);
     public struct ImageData(Vector2I Dimesions, Vector2I Start)
     {
         public struct DataLayer()
@@ -47,16 +47,6 @@ public partial class TargetImage : Sprite2D
                         }
                     }
                 }
-                /*for (int PosX = TopLeft.X; PosX <= BottomRight.X; PosX++)
-                {
-                    for (int PosY = TopLeft.Y; PosY <= BottomRight.Y; PosY++)
-                    {
-                        if (!Overlay.Pixels.ContainsKey(new(PosX, PosY)))
-                        {
-                            Overlay.Pixels.Add(new(PosX, PosY), Fill);
-                        }
-                    }
-                }*/
             }
         }
         public readonly void AddLayer(int Layer)
@@ -105,7 +95,10 @@ public partial class TargetImage : Sprite2D
     [Export] public MenuButton FileMenuButton;
     [Export] public FileDialog ExportMenu;
     [Export] public FileDialog LoadMenu;
-    [Export] public PanelContainer Resize;
+    [Export] public PanelContainer New;
+
+    [Export] public Godot.Range NewX;
+    [Export] public Godot.Range NewY;
 
     public void FileMenu(long Button)
     {
@@ -118,7 +111,7 @@ public partial class TargetImage : Sprite2D
                 LoadMenu.Show();
                 break;
             case 2:
-                Resize.Show();
+                New.Show();
                 break;
             default:
                 break;
@@ -163,7 +156,9 @@ public partial class TargetImage : Sprite2D
                     EditableImage.UpdatedPixels.Add(new(X, Y));
                 }
             }
+            GD.Print(EditableImage.UpdatedPixels.Count);
             RefreshImage();
+            GD.Print(EditableImage.UpdatedPixels.Count);
         }
     }
     public void GenerateBlank()
@@ -171,12 +166,16 @@ public partial class TargetImage : Sprite2D
         EditableImage = new(Size, Vector2I.Zero);
         EditableImage.Layers.Add(new());
         EditableImage.Validate(Color.FromArgb(0, 0, 0, 0));
-        DisplayImage = Image.CreateEmpty(Size.X, Size.X, false, Image.Format.Rgba8);
+        DisplayImage = Image.CreateEmpty(Size.X, Size.Y, false, Image.Format.Rgba8);
+        ResizeImage();
         Texture = ImageTexture.CreateFromImage(DisplayImage);
+        (BG.GetParent() as ColorRect).Size = Texture.GetSize() * Scale;
+
         Input.ActionPress("Maximize");
     }
     public void RefreshImage()
     {
+        Texture2D asdf = Texture;
         foreach (Vector2I item in EditableImage.UpdatedPixels)
         {
             Godot.Color Blended = new((float)EditableImage.Layers[0].Pixels[item].R / 255, (float)EditableImage.Layers[0].Pixels[item].G / 255, (float)EditableImage.Layers[0].Pixels[item].B / 255, (float)EditableImage.Layers[0].Pixels[item].A / 255);
@@ -197,6 +196,12 @@ public partial class TargetImage : Sprite2D
             DisplayImage.SetPixelv(item, Blended);
         }
         EditableImage.UpdatedPixels = [];
+        Texture = ImageTexture.CreateFromImage(DisplayImage);
+        asdf.Dispose();
+    }
+    public void ResizeImage()
+    {
+        DisplayImage.Crop(Size.X, Size.Y);
     }
     public void SliderChanger(float idgaf)
     {
@@ -272,6 +277,14 @@ public partial class TargetImage : Sprite2D
         base._Ready();
     }
 
+    public void NewFromSize()
+    {
+        Size = new(Mathf.RoundToInt(NewX.Value), Mathf.RoundToInt(NewY.Value));
+        GenerateBlank();
+        GD.Print($"{EditableImage.TopLeft}, {EditableImage.BottomRight}");
+        New.Hide();
+    }
+
     public override void _Process(double delta)
     {
         // GD.Print($"{ColorDisplay.Color.H}, {ColorDisplay.Color.S}, {ColorDisplay.Color.V}");
@@ -307,7 +320,6 @@ public partial class TargetImage : Sprite2D
 
         if (Input.IsActionPressed("Draw"))
         {
-            Texture2D asdf = Texture;
             if (Shape.GetPressedButton().Name == "Square" || Shape.GetPressedButton().Name == "Circle")
             {
                 // DrawLine(GetLocalMousePosition() + (DisplayImage.GetSize() / 2), PosLastFrame);
@@ -336,8 +348,6 @@ public partial class TargetImage : Sprite2D
             }
             DrewLastFrame = true;
             RefreshImage();
-            Texture = ImageTexture.CreateFromImage(DisplayImage);
-            asdf.Dispose();
         }
         else
         {
