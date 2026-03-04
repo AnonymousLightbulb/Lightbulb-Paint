@@ -99,6 +99,7 @@ public partial class TargetImage : Sprite2D
 
     [Export] public Godot.Range NewX;
     [Export] public Godot.Range NewY;
+    [Export] Vector2 ClickOffset;
 
     public void FileMenu(long Button)
     {
@@ -325,11 +326,11 @@ public partial class TargetImage : Sprite2D
                 // DrawLine(GetLocalMousePosition() + (DisplayImage.GetSize() / 2), PosLastFrame);
                 if (DrewLastFrame == true)
                 {
-                    DrawLine(GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y), PosLastFrame);
+                    DrawLine(GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + ClickOffset, PosLastFrame);
                 }
                 else
                 {
-                    DrawLine(GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y), GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y));
+                    DrawLine(GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + Offset, GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + ClickOffset);
                 }
             }
             else if (DrewLastFrame == false && Shape.GetPressedButton().Name == "Fill")
