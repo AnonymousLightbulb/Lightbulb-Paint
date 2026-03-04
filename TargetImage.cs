@@ -415,9 +415,9 @@ public partial class TargetImage : Sprite2D
                 }
                 else if (Shape.GetPressedButton().Name == "Circle")
                 {
-                    for (int startX = -(Mathf.RoundToInt(DrawSize.Value) / 2); startX < Mathf.RoundToInt(DrawSize.Value) - (Mathf.RoundToInt(DrawSize.Value) / 2); startX++)
+                    for (int startX = -(Mathf.RoundToInt(DrawSize.Value) / 2); startX <= Mathf.RoundToInt(DrawSize.Value) / 2; startX++)
                     {
-                        for (int startY = -(Mathf.RoundToInt(DrawSize.Value) / 2); startY < Mathf.RoundToInt(DrawSize.Value) - (Mathf.RoundToInt(DrawSize.Value) / 2); startY++)
+                        for (int startY = -(Mathf.RoundToInt(DrawSize.Value) / 2); startY <= Mathf.RoundToInt(DrawSize.Value) / 2; startY++)
                         {
                             DrawCirclePixel(TargetPixel + new Vector2I(startX, startY), TargetPixel, false);
                         }
@@ -433,50 +433,18 @@ public partial class TargetImage : Sprite2D
     }
     public void DrawPixel(Vector2I Pos, bool Draw = true)
     {
-        // Vector2 Posit = ToGlobal(new(Pos.X - EditableImage.TopLeft.X - (EditableImage.BottomRight.X / 2), Pos.Y - EditableImage.TopLeft.Y - (EditableImage.BottomRight.Y / 2)));
-        // bool Blocked = false;
-        // foreach (Panel item in UiBounds)
-        // {
-        //     if (Posit.X > item.GlobalPosition.X && Posit.X < item.GlobalPosition.X + item.Size.X && Posit.Y > item.GlobalPosition.Y && Posit.Y < item.GlobalPosition.Y + item.Size.Y)
-        //     {
-        //         Blocked = true;
-        //     }
-        // }
         if (Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
-            //if (Draw == true)
-            //{
             EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
             EditableImage.UpdatedPixels.Add(Pos);
-            //}
-            /*else
-            {
-                EditableImage.Overlay.Pixels[Pos] = Color.FromArgb(191, 166, 255, 166);
-                if (EditableImage.Overlay2 == false)
-                {
-                    EditableImage.UpdatedPixels.Add(Pos);
-                }
-            }*/
         }
     }
     public void DrawCirclePixel(Vector2I Pos, Vector2I Center, bool Draw = true)
     {
-        // Vector2 Posit = ToGlobal(new(Pos.X - EditableImage.TopLeft.X - (EditableImage.BottomRight.X / 2), Pos.Y - EditableImage.TopLeft.Y - (EditableImage.BottomRight.Y / 2)));
-        // bool Blocked = false;
-        // foreach (Panel item in UiBounds)
-        // {
-        //     if (Posit.X > item.GlobalPosition.X && Posit.X < item.GlobalPosition.X + item.Size.X && Posit.Y > item.GlobalPosition.Y && Posit.Y < item.GlobalPosition.Y + item.Size.Y)
-        //     {
-        //         Blocked = true;
-        //     }
-        // }
         if (Pos.DistanceTo(Center) <= (float)DrawSize.Value / 2 && Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
-            if (Draw == true)
-            {
-                EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
-                EditableImage.UpdatedPixels.Add(Pos);
-            }
+            EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
+            EditableImage.UpdatedPixels.Add(Pos);
         }
     }
     public void StartFill(Vector2I Target)
