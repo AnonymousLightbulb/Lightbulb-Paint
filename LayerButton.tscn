@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://djdg33qjr68pd"]
+
+[ext_resource type="Texture2D" uid="uid://12xbrrqcgejp" path="res://BG.png" id="1_3d3fv"]
+
+[node name="0" type="Button"]
+custom_minimum_size = Vector2(0, 48)
+icon = ExtResource("1_3d3fv")
+expand_icon = true
