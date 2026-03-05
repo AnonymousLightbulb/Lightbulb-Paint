@@ -87,6 +87,7 @@ public partial class TargetImage : Sprite2D
     public bool CheckNextFrameTime;
     public HistoryAction NextHistoryAction = new();
     public List<HistoryAction> History = [];
+    public List<HistoryAction> RedoActions = [];
 
     [Export] public Godot.Range R;
     [Export] public Godot.Range G;
@@ -502,6 +503,7 @@ public partial class TargetImage : Sprite2D
                 EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = Color.Transparent;
                 EditableImage.UpdatedPixels.Add(Pos);
             }
+            RedoActions = [];
         }
     }
     public void DrawCirclePixel(Vector2I Pos, Vector2I Center, bool Draw = true)
@@ -519,6 +521,7 @@ public partial class TargetImage : Sprite2D
                 EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = Color.Transparent;
                 EditableImage.UpdatedPixels.Add(Pos);
             }
+            RedoActions = [];
         }
     }
     public void StartFill(Vector2I Target)
@@ -536,6 +539,7 @@ public partial class TargetImage : Sprite2D
             }
             if (EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[command.Pos] == command.ToReplace || command.ToReplace.A == 0 && EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[command.Pos].A == 0)
             {
+                RedoActions = [];
                 EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[command.Pos] = SelectedColor;
                 EditableImage.UpdatedPixels.Add(command.Pos);
                 for (int i = 0; i < 4; i++)
@@ -605,13 +609,34 @@ public partial class TargetImage : Sprite2D
     {
         if (History.Count > 0)
         {
+            HistoryAction asdf = new();
+            asdf.Layer = History.Last().Layer;
             foreach (var item in History.Last().Data)
             {
+                asdf.Data.Add(item.Key, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[item.Key]);
                 EditableImage.Layers[History.Last().Layer].Pixels[item.Key] = item.Value;
                 EditableImage.UpdatedPixels.Add(item.Key);
-                RefreshImage();
             }
+            RefreshImage();
             History.RemoveAt(History.Count - 1);
+            RedoActions.Add(asdf);
+        }
+    }
+    public void Redo()
+    {
+        if (RedoActions.Count > 0)
+        {
+            HistoryAction asdf = new();
+            asdf.Layer = RedoActions[0].Layer;
+            foreach (var item in RedoActions[0].Data)
+            {
+                asdf.Data.Add(item.Key, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[item.Key]);
+                EditableImage.Layers[RedoActions[0].Layer].Pixels[item.Key] = item.Value;
+                EditableImage.UpdatedPixels.Add(item.Key);
+            }
+            RefreshImage();
+            RedoActions.RemoveAt(0);
+            History.Add(asdf);
         }
     }
 }

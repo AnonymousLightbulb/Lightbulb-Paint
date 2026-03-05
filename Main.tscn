@@ -67,6 +67,20 @@ unicode = 117
 [sub_resource type="Shortcut" id="Shortcut_20pc6"]
 events = [SubResource("InputEventKey_03owx"), SubResource("InputEventKey_wkp8b")]
 
+[sub_resource type="InputEventKey" id="InputEventKey_20pc6"]
+device = -1
+ctrl_pressed = true
+keycode = 89
+unicode = 121
+
+[sub_resource type="InputEventKey" id="InputEventKey_5vvyt"]
+device = -1
+keycode = 82
+unicode = 114
+
+[sub_resource type="Shortcut" id="Shortcut_c6i3y"]
+events = [SubResource("InputEventKey_20pc6"), SubResource("InputEventKey_5vvyt")]
+
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_uu6xs"]
 size = Vector2(128, 128)
 
@@ -345,13 +359,13 @@ layout_mode = 2
 [node name="Square" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=1624744260]
 layout_mode = 2
 toggle_mode = true
-button_pressed = true
 button_group = SubResource("ButtonGroup_uu6xs")
 text = "■"
 
 [node name="Circle" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=125690031]
 layout_mode = 2
 toggle_mode = true
+button_pressed = true
 button_group = SubResource("ButtonGroup_uu6xs")
 text = "●"
 
@@ -484,6 +498,11 @@ layout_mode = 2
 layout_mode = 2
 shortcut = SubResource("Shortcut_20pc6")
 text = "U"
+
+[node name="Redo" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer4/HBoxContainer" unique_id=454093749]
+layout_mode = 2
+shortcut = SubResource("Shortcut_c6i3y")
+text = "R"
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1985431213]
 position = Vector2(762, 512)
@@ -640,6 +659,7 @@ text = "Create New Image"
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/Value/Control/TextureRect/Value" to="Area2D/Image" method="HsvChange"]
 [connection signal="text_submitted" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/LineEdit" to="Area2D/Image" method="HexChanger"]
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer4/HBoxContainer/Undo" to="Area2D/Image" method="Undo"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer4/HBoxContainer/Redo" to="Area2D/Image" method="Redo"]
 [connection signal="file_selected" from="Export" to="Area2D/Image" method="Save"]
 [connection signal="file_selected" from="Load" to="Area2D/Image" method="Load"]
 [connection signal="pressed" from="New/Control/Create New Image" to="Area2D/Image" method="NewFromSize"]
