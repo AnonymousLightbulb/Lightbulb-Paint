@@ -53,6 +53,20 @@ keycode = 4194328
 [sub_resource type="Shortcut" id="Shortcut_03owx"]
 events = [SubResource("InputEventKey_trn2v")]
 
+[sub_resource type="InputEventKey" id="InputEventKey_03owx"]
+device = -1
+ctrl_pressed = true
+keycode = 90
+unicode = 122
+
+[sub_resource type="InputEventKey" id="InputEventKey_wkp8b"]
+device = -1
+keycode = 85
+unicode = 117
+
+[sub_resource type="Shortcut" id="Shortcut_20pc6"]
+events = [SubResource("InputEventKey_03owx"), SubResource("InputEventKey_wkp8b")]
+
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_uu6xs"]
 size = Vector2(128, 128)
 
@@ -436,25 +450,40 @@ text = "H"
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
-[node name="HBoxContainer3" type="CenterContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=219649804]
+[node name="CenterContainer3" type="CenterContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=219649804]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3" unique_id=838673828]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer3" unique_id=838673828]
 layout_mode = 2
 
-[node name="Erase" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer" unique_id=1859757687]
+[node name="Erase" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer3/HBoxContainer" unique_id=1859757687]
 layout_mode = 2
 toggle_mode = true
 shortcut = SubResource("Shortcut_trn2v")
 text = "E"
 icon_alignment = 1
 
-[node name="Picker" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer" unique_id=1836095151]
+[node name="Picker" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer3/HBoxContainer" unique_id=1836095151]
 layout_mode = 2
 toggle_mode = true
 shortcut = SubResource("Shortcut_03owx")
 icon = ExtResource("4_trn2v")
 icon_alignment = 1
+
+[node name="Space5" type="Control" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=807580785]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="CenterContainer4" type="CenterContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1040812833]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer4" unique_id=1836449448]
+layout_mode = 2
+
+[node name="Undo" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer4/HBoxContainer" unique_id=2146694855]
+layout_mode = 2
+shortcut = SubResource("Shortcut_20pc6")
+text = "U"
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1985431213]
 position = Vector2(762, 512)
@@ -480,8 +509,8 @@ FileMenuButton = NodePath("../../Panel2/MarginContainer/ScrollContainer/HBoxCont
 ExportMenu = NodePath("../../Export")
 LoadMenu = NodePath("../../Load")
 New = NodePath("../../New")
-Erase = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer/Erase")
-Picker = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer/Picker")
+Erase = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer3/HBoxContainer/Erase")
+Picker = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer3/HBoxContainer/Picker")
 NewX = NodePath("../../New/Control/X")
 NewY = NodePath("../../New/Control/Y")
 ClickOffset = Vector2(-0.5, -0.5)
@@ -610,6 +639,7 @@ text = "Create New Image"
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/Saturation/Control/TextureRect/Saturation" to="Area2D/Image" method="HsvChange"]
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/Value/Control/TextureRect/Value" to="Area2D/Image" method="HsvChange"]
 [connection signal="text_submitted" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/LineEdit" to="Area2D/Image" method="HexChanger"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer4/HBoxContainer/Undo" to="Area2D/Image" method="Undo"]
 [connection signal="file_selected" from="Export" to="Area2D/Image" method="Save"]
 [connection signal="file_selected" from="Load" to="Area2D/Image" method="Load"]
 [connection signal="pressed" from="New/Control/Create New Image" to="Area2D/Image" method="NewFromSize"]

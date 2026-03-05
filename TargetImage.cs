@@ -63,6 +63,12 @@ public partial class TargetImage : Sprite2D
         public Vector2I Pos = Posit;
         public Color ToReplace = Replaceable;
     }
+    public class HistoryAction
+    {
+        public int Layer;
+        public Dictionary<Vector2I, Color> Data = new();
+    }
+
     public ButtonGroup SelectedShape;
     public Image DisplayImage;
     public ImageData EditableImage;
@@ -79,6 +85,8 @@ public partial class TargetImage : Sprite2D
     public int DoneFills;
     [Export] double FillTIme;
     public bool CheckNextFrameTime;
+    public HistoryAction NextHistoryAction = new();
+    public List<HistoryAction> History = [];
 
     [Export] public Godot.Range R;
     [Export] public Godot.Range G;
@@ -385,6 +393,11 @@ public partial class TargetImage : Sprite2D
         {
             DrewLastFrame = false;
         }
+        if (Input.IsActionJustReleased("Draw") && NextHistoryAction.Data.Count > 0)
+        {
+            History.Add((NextHistoryAction));
+            NextHistoryAction = new();
+        }
         // Color ToReplace;
         // if ()
         while (QueuedFills.Count > 0 && DoneFills <= 131072 / 8)
@@ -421,6 +434,7 @@ public partial class TargetImage : Sprite2D
     }
     public void DrawLine(Vector2 EndPos, Vector2 CurrentPos)
     {
+        NextHistoryAction.Layer = Mathf.RoundToInt(LayerSelector.Value);
         Vector2 TargetPosition = EndPos;
         Vector2I RealTargetPixel = new(Mathf.RoundToInt(TargetPosition.X), Mathf.RoundToInt(TargetPosition.Y));
         Vector2I TargetPixel = RealTargetPixel;
@@ -477,6 +491,7 @@ public partial class TargetImage : Sprite2D
     {
         if (Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
+            NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos]);
             if (Erase.ButtonPressed == false)
             {
                 EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
@@ -583,6 +598,19 @@ public partial class TargetImage : Sprite2D
                 GD.Print("Sprite was clicked!");
                 // Add your custom logic here (e.g., change scene, start animation, etc.)
             }
+        }
+    }
+    public void Undo()
+    {
+        if (History.Count > 0)
+        {
+            foreach (var item in History.Last().Data)
+            {
+                EditableImage.Layers[History.Last().Layer].Pixels[item.Key] = item.Value;
+                EditableImage.UpdatedPixels.Add(item.Key);
+                RefreshImage();
+            }
+            History.RemoveAt(History.Count - 1);
         }
     }
 }
