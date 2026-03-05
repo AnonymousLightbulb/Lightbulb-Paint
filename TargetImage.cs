@@ -6,7 +6,7 @@ using System.Linq;
 
 public partial class TargetImage : Sprite2D
 {
-    public Vector2I Size = new(1024, 512);
+    public Vector2I Size = new(15, 15);
     public struct ImageData(Vector2I Dimesions, Vector2I Start)
     {
         public struct DataLayer()
@@ -49,13 +49,17 @@ public partial class TargetImage : Sprite2D
                 }
             }
         }
-        public readonly void AddLayer(int Layer)
+        public readonly void AddLayer(int Layer, DataLayer ToAdd)
         {
             if (Layer >= Layers.Count)
             {
-                Layers.Add(new());
-                Validate(Color.FromArgb(0, 0, 0, 0));
+                Layers.Add(ToAdd);
             }
+            else
+            {
+                Layers.Insert(Layer, ToAdd);
+            }
+            Validate(Color.FromArgb(0, 0, 0, 0));
         }
     }
     public struct FillCommand(Vector2I Posit, Color Replaceable)
@@ -177,7 +181,7 @@ public partial class TargetImage : Sprite2D
     public void GenerateBlank()
     {
         EditableImage = new(Size, Vector2I.Zero);
-        EditableImage.Layers.Add(new());
+        EditableImage.AddLayer(0, new());
         EditableImage.Validate(Color.FromArgb(0, 0, 0, 0));
         DisplayImage = Image.CreateEmpty(Size.X, Size.Y, false, Image.Format.Rgba8);
         ResizeImage();
@@ -191,14 +195,22 @@ public partial class TargetImage : Sprite2D
         Texture2D asdf = Texture;
         foreach (Vector2I item in EditableImage.UpdatedPixels)
         {
-            Godot.Color Blended = new((float)EditableImage.Layers[0].Pixels[item].R / 255, (float)EditableImage.Layers[0].Pixels[item].G / 255, (float)EditableImage.Layers[0].Pixels[item].B / 255, (float)EditableImage.Layers[0].Pixels[item].A / 255);
+            Godot.Color Under = new((float)EditableImage.Layers[0].Pixels[item].R / 255, (float)EditableImage.Layers[0].Pixels[item].G / 255, (float)EditableImage.Layers[0].Pixels[item].B / 255, (float)EditableImage.Layers[0].Pixels[item].A / 255);
             if (EditableImage.Layers.Count > 1)
             {
-                for (int i = 1; i < EditableImage.Layers.Count; i++)
+                for (int Layer = 1; Layer < EditableImage.Layers.Count; Layer++)
                 {
-                    if (EditableImage.Layers[i].Hidden == false)
+                    if (EditableImage.Layers[Layer].Hidden == false)
                     {
-                        Blended.Blend(new((float)EditableImage.Layers[i].Pixels[item].R / 255, (float)EditableImage.Layers[i].Pixels[item].G / 255, (float)EditableImage.Layers[i].Pixels[item].B / 255, (float)EditableImage.Layers[i].Pixels[item].A / 255));
+                        Godot.Color Over = new((float)EditableImage.Layers[Layer].Pixels[item].R / 255f, (float)EditableImage.Layers[Layer].Pixels[item].G / 255f, (float)EditableImage.Layers[Layer].Pixels[item].B / 255f, (float)EditableImage.Layers[Layer].Pixels[item].A / 255f);
+                        if (!Mathf.IsEqualApprox(Over.A, 0))
+                        {
+                            float Alpha = Over.A + Under.A * (1 - Over.A);
+                            float Red = (Over.R * Over.A + Under.R * Under.A * (1 - Over.A)) / Alpha;
+                            float Green = (Over.G * Over.A + Under.G * Under.A * (1 - Over.A)) / Alpha;
+                            float Blue = (Over.B * Over.A + Under.B * Under.A * (1 - Over.A)) / Alpha;
+                            Under = new(Red, Green, Blue, Alpha);
+                        }
                     }
                 }
             }
@@ -206,7 +218,8 @@ public partial class TargetImage : Sprite2D
             // {
 
             // }
-            DisplayImage.SetPixelv(item, Blended);
+            // GD.Print("Final");
+            DisplayImage.SetPixelv(item, Under);
         }
         EditableImage.UpdatedPixels = [];
         Texture = ImageTexture.CreateFromImage(DisplayImage);
@@ -492,6 +505,10 @@ public partial class TargetImage : Sprite2D
     {
         if (Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
+            while (EditableImage.Layers.Count <= Mathf.RoundToInt(LayerSelector.Value))
+            {
+                AddLayer();
+            }
             NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos]);
             if (Erase.ButtonPressed == false)
             {
@@ -510,6 +527,10 @@ public partial class TargetImage : Sprite2D
     {
         if (Pos.DistanceTo(Center) <= (float)DrawSize.Value / 2 && Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
+            while (EditableImage.Layers.Count <= Mathf.RoundToInt(LayerSelector.Value))
+            {
+                AddLayer();
+            }
             NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos]);
             if (Erase.ButtonPressed == false)
             {
@@ -638,5 +659,10 @@ public partial class TargetImage : Sprite2D
             RedoActions.RemoveAt(0);
             History.Add(asdf);
         }
+    }
+    public void AddLayer()
+    {
+        EditableImage.AddLayer(Mathf.RoundToInt(LayerSelector.Value), new());
+        LayerSelector.MaxValue = EditableImage.Layers.Count();
     }
 }
