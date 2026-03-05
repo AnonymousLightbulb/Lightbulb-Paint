@@ -99,8 +99,8 @@ public partial class TargetImage : Sprite2D
     [Export] public Button Erase;
     [Export] public Button Picker;
 
-    [Export] public Godot.Range NewX;
-    [Export] public Godot.Range NewY;
+    [Export] public LineEdit NewX;
+    [Export] public LineEdit NewY;
     [Export]
     Vector2 ClickOffset;
 
@@ -283,10 +283,13 @@ public partial class TargetImage : Sprite2D
 
     public void NewFromSize()
     {
-        Size = new(Mathf.RoundToInt(NewX.Value), Mathf.RoundToInt(NewY.Value));
-        GenerateBlank();
-        GD.Print($"{EditableImage.TopLeft}, {EditableImage.BottomRight}");
-        New.Hide();
+        if (int.Parse(NewX.Text) > 0 && int.Parse(NewY.Text) > 0)
+        {
+            Size = new(int.Parse(NewX.Text), int.Parse(NewY.Text));
+            GenerateBlank();
+            GD.Print($"{EditableImage.TopLeft}, {EditableImage.BottomRight}");
+            New.Hide();
+        }
     }
 
     public override void _Process(double delta)

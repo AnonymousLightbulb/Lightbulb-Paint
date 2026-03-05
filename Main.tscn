@@ -552,7 +552,6 @@ filters = PackedStringArray("*.png", "*.jpeg", "*.webp", "*.dds", "*.exr")
 use_native_dialog = true
 
 [node name="New" type="PanelContainer" parent="." unique_id=2013941264]
-visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -567,50 +566,32 @@ offset_bottom = 40.039997
 [node name="Control" type="Control" parent="New" unique_id=163375655]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="New/Control" unique_id=1018066054]
+[node name="Size X" type="Label" parent="New/Control" unique_id=1018066054]
 layout_mode = 0
 offset_right = 62.0
 offset_bottom = 22.0
 text = "Size X:"
 
-[node name="X" type="HSlider" parent="New/Control" unique_id=325564410 node_paths=PackedStringArray("Display")]
-layout_mode = 1
-offset_top = 22.0
-offset_right = 392.0
-offset_bottom = 38.0
-max_value = 65535.0
-script = ExtResource("2_r0du0")
-Display = NodePath("../Label2")
-
-[node name="Label2" type="Label" parent="New/Control" unique_id=1743931027]
+[node name="X" type="LineEdit" parent="New/Control" unique_id=586736442]
 layout_mode = 0
 offset_left = 65.0
 offset_right = 392.0
-offset_bottom = 22.0
+offset_bottom = 30.0
 text = "0"
 
-[node name="Label3" type="Label" parent="New/Control" unique_id=1977448551]
+[node name="Size Y" type="Label" parent="New/Control" unique_id=1977448551]
 layout_mode = 0
 offset_top = 41.0
 offset_right = 192.0
 offset_bottom = 63.0
 text = "Size Y:"
 
-[node name="Y" type="HSlider" parent="New/Control" unique_id=36926048 node_paths=PackedStringArray("Display")]
-layout_mode = 1
-offset_top = 63.0
-offset_right = 392.0
-offset_bottom = 79.0
-max_value = 65535.0
-script = ExtResource("2_r0du0")
-Display = NodePath("../Label4")
-
-[node name="Label4" type="Label" parent="New/Control" unique_id=1374260262]
+[node name="Y" type="LineEdit" parent="New/Control" unique_id=1994657699]
 layout_mode = 0
 offset_left = 65.0
 offset_top = 41.0
 offset_right = 392.0
-offset_bottom = 63.0
+offset_bottom = 71.0
 text = "0"
 
 [node name="Create New Image" type="Button" parent="New/Control" unique_id=1675780965]
