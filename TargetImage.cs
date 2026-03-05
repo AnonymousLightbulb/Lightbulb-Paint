@@ -508,6 +508,7 @@ public partial class TargetImage : Sprite2D
     {
         if (Pos.DistanceTo(Center) <= (float)DrawSize.Value / 2 && Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
+            NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos]);
             if (Erase.ButtonPressed == false)
             {
                 EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
