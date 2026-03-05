@@ -96,10 +96,13 @@ public partial class TargetImage : Sprite2D
     [Export] public FileDialog ExportMenu;
     [Export] public FileDialog LoadMenu;
     [Export] public PanelContainer New;
+    [Export] public Button Erase;
+    [Export] public Button Picker;
 
     [Export] public Godot.Range NewX;
     [Export] public Godot.Range NewY;
-    [Export] Vector2 ClickOffset;
+    [Export]
+    Vector2 ClickOffset;
 
     public void FileMenu(long Button)
     {
@@ -330,34 +333,50 @@ public partial class TargetImage : Sprite2D
 
         if (Input.IsActionPressed("Draw"))
         {
-            if (Shape.GetPressedButton().Name == "Square" || Shape.GetPressedButton().Name == "Circle")
+            if (Picker.ButtonPressed == false)
             {
-                // DrawLine(GetLocalMousePosition() + (DisplayImage.GetSize() / 2), PosLastFrame);
-                if (DrewLastFrame == true)
+                if (Shape.GetPressedButton().Name == "Square" || Shape.GetPressedButton().Name == "Circle")
                 {
-                    DrawLine(GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + ClickOffset, PosLastFrame);
+                    // DrawLine(GetLocalMousePosition() + (DisplayImage.GetSize() / 2), PosLastFrame);
+                    if (DrewLastFrame == true)
+                    {
+                        DrawLine(GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + ClickOffset, PosLastFrame);
+                    }
+                    else
+                    {
+                        DrawLine(GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + Offset, GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + ClickOffset);
+                    }
                 }
-                else
+                else if (DrewLastFrame == false && Shape.GetPressedButton().Name == "Fill")
                 {
-                    DrawLine(GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + Offset, GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + ClickOffset);
+                    if (Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X) >= EditableImage.TopLeft.X && Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X) <= EditableImage.BottomRight.X && Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) >= EditableImage.TopLeft.Y && Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) <= EditableImage.BottomRight.Y)
+                    {
+                        // Fill(new(new Vector2I(Mathf.RoundToInt(GetLocalMousePosition().X + (DisplayImage.GetSize().X / 2)), Mathf.RoundToInt(GetLocalMousePosition().Y + (DisplayImage.GetSize().Y / 2))), DisplayImage.GetPixel(Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).X), Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).Y))));
+                        // Fill(new(new Vector2I(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y)), DisplayImage.GetPixel(Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).X), Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).Y))));
+                        StartFill(new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y)));
+                    }
+                    // Fill(new(new Vector2I(1024, 1024), DisplayImage.GetPixel(Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).X), Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).Y))));
+                    // if (Mathf.RoundToInt(GetLocalMousePosition().X + (DisplayImage.GetSize().X / 2)) >= 0 && Mathf.RoundToInt(GetLocalMousePosition().X + (DisplayImage.GetSize().X / 2)) < DisplayImage.GetSize().X && Mathf.RoundToInt(GetLocalMousePosition().Y + (DisplayImage.GetSize().Y / 2)) >= 0 && Mathf.RoundToInt(GetLocalMousePosition().Y + (DisplayImage.GetSize().Y / 2)) < DisplayImage.GetSize().Y)
+                    // {
+                    //     GD.Print($"{DisplayImage.GetPixel(Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).X), Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).Y))}, {SelectedColor.Color}");
+                    // }
                 }
+                DrewLastFrame = true;
+                RefreshImage();
             }
-            else if (DrewLastFrame == false && Shape.GetPressedButton().Name == "Fill")
+            else
             {
                 if (Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X) >= EditableImage.TopLeft.X && Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X) <= EditableImage.BottomRight.X && Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) >= EditableImage.TopLeft.Y && Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) <= EditableImage.BottomRight.Y)
                 {
-                    // Fill(new(new Vector2I(Mathf.RoundToInt(GetLocalMousePosition().X + (DisplayImage.GetSize().X / 2)), Mathf.RoundToInt(GetLocalMousePosition().Y + (DisplayImage.GetSize().Y / 2))), DisplayImage.GetPixel(Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).X), Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).Y))));
-                    // Fill(new(new Vector2I(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y)), DisplayImage.GetPixel(Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).X), Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).Y))));
-                    StartFill(new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y)));
+                    R.Value = EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].R;
+                    ColorChanged = false;
+                    G.Value = EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].G;
+                    ColorChanged = false;
+                    B.Value = EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].B;
+                    ColorChanged = false;
+                    A.Value = EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].A;
                 }
-                // Fill(new(new Vector2I(1024, 1024), DisplayImage.GetPixel(Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).X), Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).Y))));
-                // if (Mathf.RoundToInt(GetLocalMousePosition().X + (DisplayImage.GetSize().X / 2)) >= 0 && Mathf.RoundToInt(GetLocalMousePosition().X + (DisplayImage.GetSize().X / 2)) < DisplayImage.GetSize().X && Mathf.RoundToInt(GetLocalMousePosition().Y + (DisplayImage.GetSize().Y / 2)) >= 0 && Mathf.RoundToInt(GetLocalMousePosition().Y + (DisplayImage.GetSize().Y / 2)) < DisplayImage.GetSize().Y)
-                // {
-                //     GD.Print($"{DisplayImage.GetPixel(Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).X), Mathf.RoundToInt((GetLocalMousePosition() + (DisplayImage.GetSize() / 2)).Y))}, {SelectedColor.Color}");
-                // }
             }
-            DrewLastFrame = true;
-            RefreshImage();
         }
         else
         {
@@ -455,16 +474,32 @@ public partial class TargetImage : Sprite2D
     {
         if (Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
-            EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
-            EditableImage.UpdatedPixels.Add(Pos);
+            if (Erase.ButtonPressed == false)
+            {
+                EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
+                EditableImage.UpdatedPixels.Add(Pos);
+            }
+            else
+            {
+                EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = Color.Transparent;
+                EditableImage.UpdatedPixels.Add(Pos);
+            }
         }
     }
     public void DrawCirclePixel(Vector2I Pos, Vector2I Center, bool Draw = true)
     {
         if (Pos.DistanceTo(Center) <= (float)DrawSize.Value / 2 && Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
-            EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
-            EditableImage.UpdatedPixels.Add(Pos);
+            if (Erase.ButtonPressed == false)
+            {
+                EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
+                EditableImage.UpdatedPixels.Add(Pos);
+            }
+            else
+            {
+                EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = Color.Transparent;
+                EditableImage.UpdatedPixels.Add(Pos);
+            }
         }
     }
     public void StartFill(Vector2I Target)

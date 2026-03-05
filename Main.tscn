@@ -5,9 +5,9 @@
 [ext_resource type="Script" uid="uid://2pplbelnrtee" path="res://NumericSlider.cs" id="2_r0du0"]
 [ext_resource type="Script" uid="uid://bg2gduwoimr38" path="res://TargetImage.cs" id="2_uu6xs"]
 [ext_resource type="Texture2D" uid="uid://dmq1x1tqds5fc" path="res://Save.png" id="4_cm0pq"]
+[ext_resource type="Texture2D" uid="uid://c13vbm8cqp6fp" path="res://Eye Dropper.png" id="4_trn2v"]
 [ext_resource type="Texture2D" uid="uid://cwn10d14pv6et" path="res://Load.png" id="5_fos0i"]
 [ext_resource type="Texture2D" uid="uid://e1n58steyhk" path="res://Draw.png" id="7_lgr22"]
-[ext_resource type="Texture2D" uid="uid://dn1lxk2eccqiu" path="res://Resize.png" id="8_trn2v"]
 
 [sub_resource type="Theme" id="Theme_lgr22"]
 default_font = ExtResource("1_3dxm6")
@@ -37,6 +37,21 @@ gradient = SubResource("Gradient_trn2v")
 width = 136
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_uu6xs"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_lgr22"]
+device = -1
+keycode = 69
+unicode = 101
+
+[sub_resource type="Shortcut" id="Shortcut_trn2v"]
+events = [SubResource("InputEventKey_lgr22")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_trn2v"]
+device = -1
+keycode = 4194328
+
+[sub_resource type="Shortcut" id="Shortcut_03owx"]
+events = [SubResource("InputEventKey_trn2v")]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_uu6xs"]
 size = Vector2(128, 128)
@@ -196,7 +211,7 @@ horizontal_alignment = 1
 [node name="Label A" type="Label" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1922369891]
 custom_minimum_size = Vector2(48, 0)
 layout_mode = 2
-text = "1"
+text = "255"
 horizontal_alignment = 1
 
 [node name="Hue" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1164812186]
@@ -307,27 +322,26 @@ alignment = 1
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=100949815]
-layout_mode = 2
-theme_override_constants/margin_left = 55
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer" unique_id=455874336]
+[node name="CenterContainer" type="CenterContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=220018515]
 layout_mode = 2
 
-[node name="Square" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1624744260]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer" unique_id=455874336]
+layout_mode = 2
+
+[node name="Square" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=1624744260]
 layout_mode = 2
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("ButtonGroup_uu6xs")
 text = "■"
 
-[node name="Circle" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=125690031]
+[node name="Circle" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=125690031]
 layout_mode = 2
 toggle_mode = true
 button_group = SubResource("ButtonGroup_uu6xs")
 text = "●"
 
-[node name="Soft Circle" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=487529917]
+[node name="Soft Circle" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=487529917]
 modulate = Color(1, 0, 0, 1)
 layout_mode = 2
 disabled = true
@@ -335,7 +349,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_uu6xs")
 text = "S"
 
-[node name="Fill" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1103427257]
+[node name="Fill" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=1103427257]
 layout_mode = 2
 toggle_mode = true
 button_group = SubResource("ButtonGroup_uu6xs")
@@ -388,34 +402,33 @@ horizontal_alignment = 1
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=271604076]
 layout_mode = 2
 
-[node name="MarginContainer2" type="MarginContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=682029307]
-layout_mode = 2
-theme_override_constants/margin_left = 41
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer2" unique_id=1486256123]
+[node name="CenterContainer2" type="CenterContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=318092321]
 layout_mode = 2
 
-[node name="Add" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer" unique_id=1618281117]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer2" unique_id=1486256123]
+layout_mode = 2
+
+[node name="Add" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer2/HBoxContainer" unique_id=1618281117]
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
 text = "+"
 
-[node name="Remove" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer" unique_id=646460911]
+[node name="Remove" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer2/HBoxContainer" unique_id=646460911]
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
 text = "-"
 
-[node name="Move Up" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer" unique_id=584274077]
+[node name="Move Up" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer2/HBoxContainer" unique_id=584274077]
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
 text = "↑"
 
-[node name="Move Down" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer" unique_id=513989477]
+[node name="Move Down" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer2/HBoxContainer" unique_id=513989477]
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
 text = "↓"
 
-[node name="Hide" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer" unique_id=179096537]
+[node name="Hide" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer2/HBoxContainer" unique_id=179096537]
 layout_mode = 2
 text = "H"
 
@@ -423,10 +436,30 @@ text = "H"
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
+[node name="HBoxContainer3" type="CenterContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=219649804]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3" unique_id=838673828]
+layout_mode = 2
+
+[node name="Erase" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer" unique_id=1859757687]
+layout_mode = 2
+toggle_mode = true
+shortcut = SubResource("Shortcut_trn2v")
+text = "E"
+icon_alignment = 1
+
+[node name="Picker" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer" unique_id=1836095151]
+layout_mode = 2
+toggle_mode = true
+shortcut = SubResource("Shortcut_03owx")
+icon = ExtResource("4_trn2v")
+icon_alignment = 1
+
 [node name="Area2D" type="Area2D" parent="." unique_id=1985431213]
 position = Vector2(762, 512)
 
-[node name="Image" type="Sprite2D" parent="Area2D" unique_id=1614788159 node_paths=PackedStringArray("BG", "DrawSize", "R", "G", "B", "A", "Hex", "H", "S", "V", "ColorDisplay", "LayerSelector", "UiBounds", "FileMenuButton", "ExportMenu", "LoadMenu", "New", "NewX", "NewY")]
+[node name="Image" type="Sprite2D" parent="Area2D" unique_id=1614788159 node_paths=PackedStringArray("BG", "DrawSize", "R", "G", "B", "A", "Hex", "H", "S", "V", "ColorDisplay", "LayerSelector", "UiBounds", "FileMenuButton", "ExportMenu", "LoadMenu", "New", "Erase", "Picker", "NewX", "NewY")]
 texture = SubResource("PlaceholderTexture2D_uu6xs")
 script = ExtResource("2_uu6xs")
 BG = NodePath("../../Mask/BG")
@@ -447,6 +480,8 @@ FileMenuButton = NodePath("../../Panel2/MarginContainer/ScrollContainer/HBoxCont
 ExportMenu = NodePath("../../Export")
 LoadMenu = NodePath("../../Load")
 New = NodePath("../../New")
+Erase = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer/Erase")
+Picker = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer3/HBoxContainer/Picker")
 NewX = NodePath("../../New/Control/X")
 NewY = NodePath("../../New/Control/Y")
 ClickOffset = Vector2(-0.5, -0.5)
@@ -483,7 +518,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 text = "File"
-item_count = 4
+item_count = 3
 popup/item_0/text = "Save"
 popup/item_0/icon = ExtResource("4_cm0pq")
 popup/item_0/id = 0
@@ -493,9 +528,10 @@ popup/item_1/id = 1
 popup/item_2/text = "New"
 popup/item_2/icon = ExtResource("7_lgr22")
 popup/item_2/id = 2
-popup/item_3/text = "Resize"
-popup/item_3/icon = ExtResource("8_trn2v")
-popup/item_3/id = 3
+
+[node name="MenuButton2" type="MenuButton" parent="Panel2/MarginContainer/ScrollContainer/HBoxContainer" unique_id=2021155051]
+layout_mode = 2
+text = "Edit"
 
 [node name="Export" type="FileDialog" parent="." unique_id=2090656461]
 oversampling_override = 1.0
