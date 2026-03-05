@@ -552,6 +552,7 @@ filters = PackedStringArray("*.png", "*.jpeg", "*.webp", "*.dds", "*.exr")
 use_native_dialog = true
 
 [node name="New" type="PanelContainer" parent="." unique_id=2013941264]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
