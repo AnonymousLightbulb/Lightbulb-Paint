@@ -215,6 +215,7 @@ public partial class TargetImage : Sprite2D
     }
     public void GenerateBlank()
     {
+        LayerList.Clear();
         EditableImage = new(Size, Vector2I.Zero);
         EditableImage.AddLayer(0, new());
         EditableImage.Validate(Color.FromArgb(0, 0, 0, 0));
@@ -222,8 +223,9 @@ public partial class TargetImage : Sprite2D
         ResizeImage();
         Texture = ImageTexture.CreateFromImage(DisplayImage);
         (BG.GetParent() as ColorRect).Size = Texture.GetSize() * Scale;
+        LayerThumbnails = [];
         LayerThumbnails.Add(Image.CreateEmpty(Size.X, Size.Y, false, Image.Format.Rgba8));
-
+        RefreshImage();
 
         Input.ActionPress("Maximize");
     }
@@ -252,12 +254,19 @@ public partial class TargetImage : Sprite2D
             DisplayImage.SetPixelv(item, Under);
         }
         int MaxLayer = EditableImage.Layers.Count;
-        int CurrentLayer = LayerList.GetSelectedItems()[0];
+        int CurrentLayer = 0;
+        if (LayerList.GetSelectedItems().Count() > 0)
+        {
+            CurrentLayer = LayerList.GetSelectedItems()[0];
+        }
         LayerList.Clear();
         LayerTextures = [];
         for (int Layer = 0; Layer < MaxLayer; Layer++)
         {
             LayerTextures.Add(ImageTexture.CreateFromImage(LayerThumbnails[Layer]));
+        }
+        for (int Layer = MaxLayer - 1; Layer >= 0; Layer--)
+        {
             LayerList.AddItem($"Layer {Layer}", LayerTextures[Layer]);
         }
         LayerList.Select(CurrentLayer);
@@ -341,7 +350,6 @@ public partial class TargetImage : Sprite2D
         // }
         GenerateBlank();
         base._Ready();
-        LayerList.Select(0);
     }
 
     public void NewFromSize()
@@ -357,6 +365,12 @@ public partial class TargetImage : Sprite2D
 
     public override void _Process(double delta)
     {
+        int BiggerAxis = Size.X;
+        if (Size.Y > Size.X)
+        {
+            BiggerAxis = Size.Y;
+        }
+        LayerList.IconScale = 48f / BiggerAxis;
         // GD.Print($"{ColorDisplay.Color.H}, {ColorDisplay.Color.S}, {ColorDisplay.Color.V}");
         ColorChanged = false;
         SelectedColor = Color.FromArgb((byte)Mathf.RoundToInt(A.Value), (byte)Mathf.RoundToInt(R.Value), (byte)Mathf.RoundToInt(G.Value), (byte)Mathf.RoundToInt(B.Value));
@@ -434,13 +448,13 @@ public partial class TargetImage : Sprite2D
             {
                 if (Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X) >= EditableImage.TopLeft.X && Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X) <= EditableImage.BottomRight.X && Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) >= EditableImage.TopLeft.Y && Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) <= EditableImage.BottomRight.Y)
                 {
-                    R.Value = EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].R;
+                    R.Value = EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].R;
                     ColorChanged = false;
-                    G.Value = EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].G;
+                    G.Value = EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].G;
                     ColorChanged = false;
-                    B.Value = EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].B;
+                    B.Value = EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].B;
                     ColorChanged = false;
-                    A.Value = EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].A;
+                    A.Value = EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].A;
                 }
             }
         }
@@ -499,7 +513,7 @@ public partial class TargetImage : Sprite2D
             bool Blocked = false;
             foreach (Control item in UiBounds)
             {
-                if (item.Visible == true && Posit.X > item.GlobalPosition.X && Posit.X < item.GlobalPosition.X + item.Size.X && Posit.Y > item.GlobalPosition.Y && Posit.Y < item.GlobalPosition.Y + item.Size.Y)
+                if (item.IsVisibleInTree() == true && Posit.X > item.GlobalPosition.X && Posit.X < item.GlobalPosition.X + item.Size.X && Posit.Y > item.GlobalPosition.Y && Posit.Y < item.GlobalPosition.Y + item.Size.Y)
                 {
                     Blocked = true;
                     Drawing = false;
@@ -545,19 +559,19 @@ public partial class TargetImage : Sprite2D
     {
         if (Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
-            while (EditableImage.Layers.Count <= LayerList.GetSelectedItems()[0])
+            while (EditableImage.Layers.Count <= (EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0])
             {
                 AddLayer();
             }
-            NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos]);
+            NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[Pos]);
             if (Erase.ButtonPressed == false)
             {
-                EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos] = SelectedColor;
+                EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[Pos] = SelectedColor;
                 EditableImage.UpdatedPixels.Add(Pos);
             }
             else
             {
-                EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos] = Color.Transparent;
+                EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[Pos] = Color.Transparent;
                 EditableImage.UpdatedPixels.Add(Pos);
             }
             EditableImage.RedoActions = [];
@@ -567,19 +581,19 @@ public partial class TargetImage : Sprite2D
     {
         if (Pos.DistanceTo(Center) <= (float)DrawSize.Value / 2 && Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
-            while (EditableImage.Layers.Count <= LayerList.GetSelectedItems()[0])
+            while (EditableImage.Layers.Count <= (EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0])
             {
                 AddLayer();
             }
-            NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos]);
+            NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[Pos]);
             if (Erase.ButtonPressed == false)
             {
-                EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos] = SelectedColor;
+                EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[Pos] = SelectedColor;
                 EditableImage.UpdatedPixels.Add(Pos);
             }
             else
             {
-                EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos] = Color.Transparent;
+                EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[Pos] = Color.Transparent;
                 EditableImage.UpdatedPixels.Add(Pos);
             }
             EditableImage.RedoActions = [];
@@ -587,7 +601,11 @@ public partial class TargetImage : Sprite2D
     }
     public void StartFill(Vector2I Target)
     {
-        Fill(new(Target, EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Target]));
+        Fill(new(Target, EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[Target]));
+    }
+    public void NeoFill(FillCommand command)
+    {
+        List<FillCommand> S = [command];
     }
     public void Fill(FillCommand command)
     {
@@ -598,10 +616,10 @@ public partial class TargetImage : Sprite2D
                 GD.Print("asdf");
                 return;
             }
-            if (EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[command.Pos] == command.ToReplace || command.ToReplace.A == 0 && EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[command.Pos].A == 0)
+            if (EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[command.Pos] == command.ToReplace || command.ToReplace.A == 0 && EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[command.Pos].A == 0)
             {
                 EditableImage.RedoActions = [];
-                EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[command.Pos] = SelectedColor;
+                EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[command.Pos] = SelectedColor;
                 EditableImage.UpdatedPixels.Add(command.Pos);
                 for (int i = 0; i < 4; i++)
                 {
@@ -676,7 +694,7 @@ public partial class TargetImage : Sprite2D
                 asdf.Layer = EditableImage.History.Last().Layer;
                 foreach (var item in (EditableImage.History.Last() as DrawHistory).Data)
                 {
-                    asdf.Data.Add(item.Key, EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[item.Key]);
+                    asdf.Data.Add(item.Key, EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[item.Key]);
                     EditableImage.Layers[EditableImage.History.Last().Layer].Pixels[item.Key] = item.Value;
                     EditableImage.UpdatedPixels.Add(item.Key);
                 }
@@ -696,7 +714,7 @@ public partial class TargetImage : Sprite2D
                 asdf.Layer = EditableImage.RedoActions[0].Layer;
                 foreach (var item in (EditableImage.RedoActions[0] as DrawHistory).Data)
                 {
-                    asdf.Data.Add(item.Key, EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[item.Key]);
+                    asdf.Data.Add(item.Key, EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[item.Key]);
                     EditableImage.Layers[EditableImage.RedoActions[0].Layer].Pixels[item.Key] = item.Value;
                     EditableImage.UpdatedPixels.Add(item.Key);
                 }
@@ -708,7 +726,7 @@ public partial class TargetImage : Sprite2D
     }
     public void AddLayer()
     {
-        EditableImage.AddLayer(Mathf.RoundToInt(LayerList.GetSelectedItems()[0] + 1), new());
+        EditableImage.AddLayer(Mathf.RoundToInt(((EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]) + 1), new());
         LayerThumbnails.Add(Image.CreateEmpty(Size.X, Size.Y, false, Image.Format.Rgba8));
         RefreshImage();
     }
@@ -716,12 +734,9 @@ public partial class TargetImage : Sprite2D
     {
         if (EditableImage.Layers.Count > 1)
         {
-            if (LayerList.GetSelectedItems()[0] - 1 >= 0)
-            {
-                LayerList.Select(LayerList.GetSelectedItems()[0] - 1);
-            }
-            EditableImage.RemoveLayer(LayerList.GetSelectedItems()[0]);
-            LayerThumbnails.RemoveAt(LayerList.GetSelectedItems()[0]);
+
+            EditableImage.RemoveLayer((EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]);
+            LayerThumbnails.RemoveAt((EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]);
             RefreshImage();
         }
     }

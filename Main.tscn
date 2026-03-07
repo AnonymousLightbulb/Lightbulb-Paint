@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://2pplbelnrtee" path="res://NumericSlider.cs" id="2_r0du0"]
 [ext_resource type="Script" uid="uid://bg2gduwoimr38" path="res://TargetImage.cs" id="2_uu6xs"]
 [ext_resource type="Texture2D" uid="uid://dmq1x1tqds5fc" path="res://Save.png" id="4_cm0pq"]
+[ext_resource type="Texture2D" uid="uid://buaxckahsicjo" path="res://Blank.png" id="4_trn2v"]
 [ext_resource type="Texture2D" uid="uid://cwn10d14pv6et" path="res://Load.png" id="5_fos0i"]
 [ext_resource type="Texture2D" uid="uid://e1n58steyhk" path="res://Draw.png" id="7_lgr22"]
 
@@ -432,7 +433,8 @@ custom_minimum_size = Vector2(0, 256)
 layout_mode = 2
 item_count = 1
 icon_scale = 3.0
-item_0/text = "0"
+item_0/text = "Layer 0"
+item_0/icon = ExtResource("4_trn2v")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=271604076]
 layout_mode = 2
@@ -631,7 +633,7 @@ text = "Size X:"
 [node name="X" type="LineEdit" parent="New/Control" unique_id=586736442]
 layout_mode = 0
 offset_left = 65.0
-offset_right = 392.0
+offset_right = 373.0
 offset_bottom = 30.0
 text = "0"
 
@@ -646,7 +648,7 @@ text = "Size Y:"
 layout_mode = 0
 offset_left = 65.0
 offset_top = 41.0
-offset_right = 392.0
+offset_right = 373.0
 offset_bottom = 71.0
 text = "0"
 
@@ -656,6 +658,16 @@ offset_top = 81.0
 offset_right = 400.0
 offset_bottom = 111.0
 text = "Create New Image"
+
+[node name="Exit" type="Button" parent="New/Control" unique_id=192089132]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -20.0
+offset_bottom = 30.0
+grow_horizontal = 0
+text = "X"
 
 [node name="Resize" type="PanelContainer" parent="." unique_id=251960767]
 visible = false
@@ -682,7 +694,7 @@ text = "Left X:"
 [node name="-X" type="LineEdit" parent="Resize/Control" unique_id=1755419683]
 layout_mode = 0
 offset_left = 93.0
-offset_right = 392.0
+offset_right = 243.0
 offset_bottom = 30.0
 text = "0"
 
@@ -697,7 +709,7 @@ text = "Top Y:"
 layout_mode = 0
 offset_left = 93.0
 offset_top = 41.0
-offset_right = 392.0
+offset_right = 243.0
 offset_bottom = 71.0
 text = "0"
 
@@ -712,7 +724,7 @@ text = "Right  X:"
 layout_mode = 0
 offset_left = 93.0
 offset_top = 81.00003
-offset_right = 392.0
+offset_right = 243.0
 offset_bottom = 111.00003
 text = "0"
 
@@ -727,7 +739,7 @@ text = "Bottom Y:"
 layout_mode = 0
 offset_left = 93.0
 offset_top = 122.00003
-offset_right = 392.0
+offset_right = 243.0
 offset_bottom = 152.00003
 text = "0"
 
@@ -746,6 +758,28 @@ offset_right = 400.0
 offset_bottom = 192.0
 text = "Resize"
 
+[node name="OptionButton" type="OptionButton" parent="Resize/Control" unique_id=367807752]
+layout_mode = 0
+offset_left = 250.0
+offset_top = 41.0
+offset_right = 393.0
+offset_bottom = 71.0
+selected = 0
+item_count = 2
+popup/item_0/text = "Nearest"
+popup/item_0/id = 0
+popup/item_1/id = 1
+
+[node name="Exit" type="Button" parent="Resize/Control" unique_id=1793224585]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -20.0
+offset_bottom = 30.0
+grow_horizontal = 0
+text = "X"
+
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer/Red" to="Area2D/Image" method="SliderChanger"]
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer/Green" to="Area2D/Image" method="SliderChanger"]
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer/Blue" to="Area2D/Image" method="SliderChanger"]
@@ -761,3 +795,5 @@ text = "Resize"
 [connection signal="file_selected" from="Export" to="Area2D/Image" method="Save"]
 [connection signal="file_selected" from="Load" to="Area2D/Image" method="Load"]
 [connection signal="pressed" from="New/Control/Create New Image" to="Area2D/Image" method="NewFromSize"]
+[connection signal="pressed" from="New/Control/Exit" to="New" method="hide"]
+[connection signal="pressed" from="Resize/Control/Exit" to="Resize" method="hide"]
