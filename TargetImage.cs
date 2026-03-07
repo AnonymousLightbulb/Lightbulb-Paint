@@ -29,6 +29,8 @@ public partial class TargetImage : Sprite2D
         public Vector2I TopLeft = Start;
         public Vector2I BottomRight = Start + Dimesions - new Vector2I(1, 1);
         public HashSet<Vector2I> UpdatedPixels = [];
+        public List<HistoryAction> History = [];
+        public List<HistoryAction> RedoActions = [];
         public readonly Vector2I GetSize()
         {
             return new(Mathf.Abs(TopLeft.X) + Mathf.Abs(BottomRight.X) + 1, Mathf.Abs(TopLeft.Y) + Mathf.Abs(BottomRight.Y) + 1);
@@ -61,6 +63,21 @@ public partial class TargetImage : Sprite2D
             }
             Validate(Color.FromArgb(0, 0, 0, 0));
         }
+        public readonly void RemoveLayer(int Layer)
+        {
+            if (Layers.Count > 1)
+            {
+                Layer = Mathf.Clamp(Layer, 0, Layers.Count - 1);
+                Layers.RemoveAt(Layer);
+                for (int PosX = TopLeft.X; PosX <= BottomRight.X; PosX++)
+                {
+                    for (int PosY = TopLeft.Y; PosY <= BottomRight.Y; PosY++)
+                    {
+                        UpdatedPixels.Add(new(PosX, PosY));
+                    }
+                }
+            }
+        }
     }
     public struct FillCommand(Vector2I Posit, Color Replaceable)
     {
@@ -70,9 +87,26 @@ public partial class TargetImage : Sprite2D
     public class HistoryAction
     {
         public int Layer;
+    }
+    public class DrawHistory : HistoryAction
+    {
         public Dictionary<Vector2I, Color> Data = new();
     }
+    public class LayerHistory : HistoryAction
+    {
+        public ImageData.DataLayer Data;
 
+        public LayerAction WhatWasDone;
+
+        public enum LayerAction
+        {
+            Added,
+            Removed,
+            MovedUp,
+            MovedDown,
+            Hide,
+        }
+    }
     public ButtonGroup SelectedShape;
     public Image DisplayImage;
     public ImageData EditableImage;
@@ -89,9 +123,7 @@ public partial class TargetImage : Sprite2D
     public int DoneFills;
     [Export] double FillTIme;
     public bool CheckNextFrameTime;
-    public HistoryAction NextHistoryAction = new();
-    public List<HistoryAction> History = [];
-    public List<HistoryAction> RedoActions = [];
+    public DrawHistory NextHistoryAction = new();
 
     [Export] public Godot.Range R;
     [Export] public Godot.Range G;
@@ -103,7 +135,7 @@ public partial class TargetImage : Sprite2D
     [Export] public Godot.Range V;
     [Export] public ColorRect ColorDisplay;
     public bool ColorChanged;
-    [Export] public Godot.Range LayerSelector;
+    //[Export] public Godot.Range LayerSelector;
     [Export] public Panel[] UiBounds;
     [Export] public MenuButton FileMenuButton;
     [Export] public FileDialog ExportMenu;
@@ -111,11 +143,11 @@ public partial class TargetImage : Sprite2D
     [Export] public PanelContainer New;
     [Export] public Button Erase;
     [Export] public Button Picker;
+    [Export] public ItemList LayerList;
 
     [Export] public LineEdit NewX;
     [Export] public LineEdit NewY;
-    [Export]
-    Vector2 ClickOffset;
+    [Export] Vector2 ClickOffset;
 
     public void FileMenu(long Button)
     {
@@ -301,6 +333,7 @@ public partial class TargetImage : Sprite2D
         // }
         GenerateBlank();
         base._Ready();
+        LayerList.Select(0);
     }
 
     public void NewFromSize()
@@ -369,7 +402,7 @@ public partial class TargetImage : Sprite2D
                     }
                     else
                     {
-                        DrawLine(GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + Offset, GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + ClickOffset);
+                        DrawLine(GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + ClickOffset, GetLocalMousePosition() + new Vector2((float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X, (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) + ClickOffset);
                     }
                 }
                 else if (DrewLastFrame == false && Shape.GetPressedButton().Name == "Fill")
@@ -393,13 +426,13 @@ public partial class TargetImage : Sprite2D
             {
                 if (Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X) >= EditableImage.TopLeft.X && Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X) <= EditableImage.BottomRight.X && Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) >= EditableImage.TopLeft.Y && Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y) <= EditableImage.BottomRight.Y)
                 {
-                    R.Value = EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].R;
+                    R.Value = EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].R;
                     ColorChanged = false;
-                    G.Value = EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].G;
+                    G.Value = EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].G;
                     ColorChanged = false;
-                    B.Value = EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].B;
+                    B.Value = EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].B;
                     ColorChanged = false;
-                    A.Value = EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].A;
+                    A.Value = EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[new(Mathf.RoundToInt(GetLocalMousePosition().X + (float)EditableImage.GetSize().X / 2 + EditableImage.TopLeft.X), Mathf.RoundToInt(GetLocalMousePosition().Y + (float)EditableImage.GetSize().Y / 2 + EditableImage.TopLeft.Y))].A;
                 }
             }
         }
@@ -409,7 +442,7 @@ public partial class TargetImage : Sprite2D
         }
         if (Input.IsActionJustReleased("Draw") && NextHistoryAction.Data.Count > 0)
         {
-            History.Add((NextHistoryAction));
+            EditableImage.History.Add((NextHistoryAction));
             NextHistoryAction = new();
         }
         // Color ToReplace;
@@ -448,7 +481,7 @@ public partial class TargetImage : Sprite2D
     }
     public void DrawLine(Vector2 EndPos, Vector2 CurrentPos)
     {
-        NextHistoryAction.Layer = Mathf.RoundToInt(LayerSelector.Value);
+        NextHistoryAction.Layer = LayerList.GetSelectedItems()[0];
         Vector2 TargetPosition = EndPos;
         Vector2I RealTargetPixel = new(Mathf.RoundToInt(TargetPosition.X), Mathf.RoundToInt(TargetPosition.Y));
         Vector2I TargetPixel = RealTargetPixel;
@@ -505,49 +538,49 @@ public partial class TargetImage : Sprite2D
     {
         if (Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
-            while (EditableImage.Layers.Count <= Mathf.RoundToInt(LayerSelector.Value))
+            while (EditableImage.Layers.Count <= LayerList.GetSelectedItems()[0])
             {
                 AddLayer();
             }
-            NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos]);
+            NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos]);
             if (Erase.ButtonPressed == false)
             {
-                EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
+                EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos] = SelectedColor;
                 EditableImage.UpdatedPixels.Add(Pos);
             }
             else
             {
-                EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = Color.Transparent;
+                EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos] = Color.Transparent;
                 EditableImage.UpdatedPixels.Add(Pos);
             }
-            RedoActions = [];
+            EditableImage.RedoActions = [];
         }
     }
     public void DrawCirclePixel(Vector2I Pos, Vector2I Center, bool Draw = true)
     {
         if (Pos.DistanceTo(Center) <= (float)DrawSize.Value / 2 && Pos.X >= EditableImage.TopLeft.X && Pos.X <= EditableImage.BottomRight.X && Pos.Y >= EditableImage.TopLeft.Y && Pos.Y <= EditableImage.BottomRight.Y)
         {
-            while (EditableImage.Layers.Count <= Mathf.RoundToInt(LayerSelector.Value))
+            while (EditableImage.Layers.Count <= LayerList.GetSelectedItems()[0])
             {
                 AddLayer();
             }
-            NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos]);
+            NextHistoryAction.Data.TryAdd(Pos, EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos]);
             if (Erase.ButtonPressed == false)
             {
-                EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = SelectedColor;
+                EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos] = SelectedColor;
                 EditableImage.UpdatedPixels.Add(Pos);
             }
             else
             {
-                EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Pos] = Color.Transparent;
+                EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Pos] = Color.Transparent;
                 EditableImage.UpdatedPixels.Add(Pos);
             }
-            RedoActions = [];
+            EditableImage.RedoActions = [];
         }
     }
     public void StartFill(Vector2I Target)
     {
-        Fill(new(Target, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[Target]));
+        Fill(new(Target, EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[Target]));
     }
     public void Fill(FillCommand command)
     {
@@ -558,10 +591,10 @@ public partial class TargetImage : Sprite2D
                 GD.Print("asdf");
                 return;
             }
-            if (EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[command.Pos] == command.ToReplace || command.ToReplace.A == 0 && EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[command.Pos].A == 0)
+            if (EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[command.Pos] == command.ToReplace || command.ToReplace.A == 0 && EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[command.Pos].A == 0)
             {
-                RedoActions = [];
-                EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[command.Pos] = SelectedColor;
+                EditableImage.RedoActions = [];
+                EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[command.Pos] = SelectedColor;
                 EditableImage.UpdatedPixels.Add(command.Pos);
                 for (int i = 0; i < 4; i++)
                 {
@@ -628,41 +661,60 @@ public partial class TargetImage : Sprite2D
     }
     public void Undo()
     {
-        if (History.Count > 0)
+        if (EditableImage.History.Count > 0)
         {
-            HistoryAction asdf = new();
-            asdf.Layer = History.Last().Layer;
-            foreach (var item in History.Last().Data)
+            if (EditableImage.History.Last() is DrawHistory)
             {
-                asdf.Data.Add(item.Key, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[item.Key]);
-                EditableImage.Layers[History.Last().Layer].Pixels[item.Key] = item.Value;
-                EditableImage.UpdatedPixels.Add(item.Key);
+                DrawHistory asdf = new();
+                asdf.Layer = EditableImage.History.Last().Layer;
+                foreach (var item in (EditableImage.History.Last() as DrawHistory).Data)
+                {
+                    asdf.Data.Add(item.Key, EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[item.Key]);
+                    EditableImage.Layers[EditableImage.History.Last().Layer].Pixels[item.Key] = item.Value;
+                    EditableImage.UpdatedPixels.Add(item.Key);
+                }
+                RefreshImage();
+                EditableImage.History.RemoveAt(EditableImage.History.Count - 1);
+                EditableImage.RedoActions.Add(asdf);
             }
-            RefreshImage();
-            History.RemoveAt(History.Count - 1);
-            RedoActions.Add(asdf);
         }
     }
     public void Redo()
     {
-        if (RedoActions.Count > 0)
+        if (EditableImage.RedoActions.Count > 0)
         {
-            HistoryAction asdf = new();
-            asdf.Layer = RedoActions[0].Layer;
-            foreach (var item in RedoActions[0].Data)
+            if (EditableImage.RedoActions[0] is DrawHistory)
             {
-                asdf.Data.Add(item.Key, EditableImage.Layers[Mathf.RoundToInt(LayerSelector.Value)].Pixels[item.Key]);
-                EditableImage.Layers[RedoActions[0].Layer].Pixels[item.Key] = item.Value;
-                EditableImage.UpdatedPixels.Add(item.Key);
+                DrawHistory asdf = new();
+                asdf.Layer = EditableImage.RedoActions[0].Layer;
+                foreach (var item in (EditableImage.RedoActions[0] as DrawHistory).Data)
+                {
+                    asdf.Data.Add(item.Key, EditableImage.Layers[LayerList.GetSelectedItems()[0]].Pixels[item.Key]);
+                    EditableImage.Layers[EditableImage.RedoActions[0].Layer].Pixels[item.Key] = item.Value;
+                    EditableImage.UpdatedPixels.Add(item.Key);
+                }
+                RefreshImage();
+                EditableImage.RedoActions.RemoveAt(0);
+                EditableImage.History.Add(asdf);
             }
-            RefreshImage();
-            RedoActions.RemoveAt(0);
-            History.Add(asdf);
         }
     }
     public void AddLayer()
     {
-        EditableImage.AddLayer(Mathf.RoundToInt(LayerSelector.Value), new());
-        LayerSelector.MaxValue = EditableImage.Layers.Count();
+        EditableImage.AddLayer(Mathf.RoundToInt(LayerList.GetSelectedItems()[0] + 1), new());
+        LayerList.AddItem($"{LayerList.ItemCount}");
+    }
+    public void RemoveLayer()
+    {
+        if (EditableImage.Layers.Count > 1)
+        {
+            if (LayerList.GetSelectedItems()[0] - 1 >= 0)
+            {
+                LayerList.Select(LayerList.GetSelectedItems()[0] - 1);
+            }
+            LayerList.RemoveItem(LayerList.ItemCount - 1);
+            EditableImage.RemoveLayer(LayerList.GetSelectedItems()[0]);
+            RefreshImage();
+        }
     }
 }

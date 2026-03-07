@@ -5,7 +5,6 @@
 [ext_resource type="Script" uid="uid://2pplbelnrtee" path="res://NumericSlider.cs" id="2_r0du0"]
 [ext_resource type="Script" uid="uid://bg2gduwoimr38" path="res://TargetImage.cs" id="2_uu6xs"]
 [ext_resource type="Texture2D" uid="uid://dmq1x1tqds5fc" path="res://Save.png" id="4_cm0pq"]
-[ext_resource type="Texture2D" uid="uid://c13vbm8cqp6fp" path="res://Eye Dropper.png" id="4_trn2v"]
 [ext_resource type="Texture2D" uid="uid://cwn10d14pv6et" path="res://Load.png" id="5_fos0i"]
 [ext_resource type="Texture2D" uid="uid://e1n58steyhk" path="res://Draw.png" id="7_lgr22"]
 
@@ -179,6 +178,7 @@ layout_mode = 2
 self_modulate = Color(1, 0, 0, 1)
 custom_minimum_size = Vector2(48, 128)
 layout_mode = 2
+tooltip_text = "The slider to control the red of the color you will draw with."
 max_value = 255.0
 value = 255.0
 rounded = true
@@ -189,6 +189,7 @@ Display = NodePath("../../HBoxContainer2/Label R")
 self_modulate = Color(0, 1, 0, 1)
 custom_minimum_size = Vector2(48, 128)
 layout_mode = 2
+tooltip_text = "The slider to control the green of the color you will draw with."
 max_value = 255.0
 rounded = true
 script = ExtResource("2_r0du0")
@@ -198,6 +199,7 @@ Display = NodePath("../../HBoxContainer2/Label G")
 self_modulate = Color(0, 0, 1, 1)
 custom_minimum_size = Vector2(48, 128)
 layout_mode = 2
+tooltip_text = "The slider to control the blue of the color you will draw with."
 max_value = 255.0
 rounded = true
 script = ExtResource("2_r0du0")
@@ -206,6 +208,7 @@ Display = NodePath("../../HBoxContainer2/Label B")
 [node name="Alpha" type="VSlider" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2021601300 node_paths=PackedStringArray("Display")]
 custom_minimum_size = Vector2(48, 128)
 layout_mode = 2
+tooltip_text = "The slider to control the opacity of the color you will draw with."
 max_value = 255.0
 value = 255.0
 rounded = true
@@ -269,6 +272,7 @@ offset_left = -8.0
 offset_top = -7.0
 offset_right = 144.0
 offset_bottom = 15.0
+tooltip_text = "The slider to control the hue of the color you will draw with."
 theme_override_styles/slider = SubResource("StyleBoxEmpty_3dxm6")
 max_value = 360.0
 rounded = true
@@ -302,6 +306,7 @@ offset_left = -8.0
 offset_top = -7.0
 offset_right = 144.0
 offset_bottom = 15.0
+tooltip_text = "The slider to control the saturation of the color you will draw with."
 theme_override_styles/slider = SubResource("StyleBoxEmpty_3dxm6")
 value = 100.0
 rounded = true
@@ -335,6 +340,8 @@ offset_left = -8.0
 offset_top = -7.0
 offset_right = 144.0
 offset_bottom = 15.0
+tooltip_text = "The slider to control the brightness
+ of the color you will draw with."
 theme_override_styles/slider = SubResource("StyleBoxEmpty_3dxm6")
 value = 100.0
 rounded = true
@@ -343,6 +350,7 @@ Display = NodePath("../../../Label V")
 
 [node name="LineEdit" type="LineEdit" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1094061237]
 layout_mode = 2
+tooltip_text = "The hex code of your color"
 text = "FF0000FF"
 alignment = 1
 
@@ -356,18 +364,20 @@ layout_mode = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer" unique_id=455874336]
 layout_mode = 2
 
-[node name="Square" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=1624744260]
-layout_mode = 2
-toggle_mode = true
-button_group = SubResource("ButtonGroup_uu6xs")
-text = "■"
-
 [node name="Circle" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=125690031]
 layout_mode = 2
+tooltip_text = "Circle brush: draws pixels in a circle"
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("ButtonGroup_uu6xs")
 text = "●"
+
+[node name="Square" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=1624744260]
+layout_mode = 2
+tooltip_text = "Square brush: draws pixels in a square"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_uu6xs")
+text = "■"
 
 [node name="Soft Circle" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=487529917]
 modulate = Color(1, 0, 0, 1)
@@ -379,6 +389,7 @@ text = "S"
 
 [node name="Fill" type="Button" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer/HBoxContainer" unique_id=1103427257]
 layout_mode = 2
+tooltip_text = "Fill tool: Fills the selected bounds"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_uu6xs")
 text = "F"
@@ -394,6 +405,7 @@ horizontal_alignment = 1
 
 [node name="Brush Size" type="HSlider" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=324977472 node_paths=PackedStringArray("Display")]
 layout_mode = 2
+tooltip_text = "Brush size: sets the diameter of the brush"
 min_value = 1.0
 max_value = 50.0
 value = 1.0
@@ -415,17 +427,12 @@ layout_mode = 2
 text = "Layer"
 horizontal_alignment = 1
 
-[node name="Layer" type="HSlider" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=611473707 node_paths=PackedStringArray("Display")]
+[node name="LayerList" type="ItemList" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=930668824]
+custom_minimum_size = Vector2(0, 256)
 layout_mode = 2
-max_value = 1.0
-rounded = true
-script = ExtResource("2_r0du0")
-Display = NodePath("../Layer Number")
-
-[node name="Layer Number" type="Label" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1188581950]
-layout_mode = 2
-text = "0"
-horizontal_alignment = 1
+item_count = 1
+icon_scale = 3.0
+item_0/text = "0"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=271604076]
 layout_mode = 2
@@ -481,7 +488,7 @@ icon_alignment = 1
 layout_mode = 2
 toggle_mode = true
 shortcut = SubResource("Shortcut_03owx")
-icon = ExtResource("4_trn2v")
+text = "P"
 icon_alignment = 1
 
 [node name="Space5" type="Control" parent="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=807580785]
@@ -507,7 +514,7 @@ text = "R"
 [node name="Area2D" type="Area2D" parent="." unique_id=1985431213]
 position = Vector2(762, 512)
 
-[node name="Image" type="Sprite2D" parent="Area2D" unique_id=1614788159 node_paths=PackedStringArray("BG", "DrawSize", "R", "G", "B", "A", "Hex", "H", "S", "V", "ColorDisplay", "LayerSelector", "UiBounds", "FileMenuButton", "ExportMenu", "LoadMenu", "New", "Erase", "Picker", "NewX", "NewY")]
+[node name="Image" type="Sprite2D" parent="Area2D" unique_id=1614788159 node_paths=PackedStringArray("BG", "DrawSize", "R", "G", "B", "A", "Hex", "H", "S", "V", "ColorDisplay", "UiBounds", "FileMenuButton", "ExportMenu", "LoadMenu", "New", "Erase", "Picker", "LayerList", "NewX", "NewY")]
 texture = SubResource("PlaceholderTexture2D_uu6xs")
 script = ExtResource("2_uu6xs")
 BG = NodePath("../../Mask/BG")
@@ -522,7 +529,6 @@ H = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxCo
 S = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/Saturation/Control/TextureRect/Saturation")
 V = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/Value/Control/TextureRect/Value")
 ColorDisplay = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/BG/Color Display")
-LayerSelector = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/Layer")
 UiBounds = [NodePath("../../Panel"), NodePath("../../Panel2")]
 FileMenuButton = NodePath("../../Panel2/MarginContainer/ScrollContainer/HBoxContainer/MenuButton")
 ExportMenu = NodePath("../../Export")
@@ -530,6 +536,7 @@ LoadMenu = NodePath("../../Load")
 New = NodePath("../../New")
 Erase = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer3/HBoxContainer/Erase")
 Picker = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer3/HBoxContainer/Picker")
+LayerList = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/LayerList")
 NewX = NodePath("../../New/Control/X")
 NewY = NodePath("../../New/Control/Y")
 ClickOffset = Vector2(-0.5, -0.5)
@@ -658,6 +665,8 @@ text = "Create New Image"
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/Saturation/Control/TextureRect/Saturation" to="Area2D/Image" method="HsvChange"]
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/Value/Control/TextureRect/Value" to="Area2D/Image" method="HsvChange"]
 [connection signal="text_submitted" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/LineEdit" to="Area2D/Image" method="HexChanger"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer2/HBoxContainer/Add" to="Area2D/Image" method="AddLayer"]
+[connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer2/HBoxContainer/Remove" to="Area2D/Image" method="RemoveLayer"]
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer4/HBoxContainer/Undo" to="Area2D/Image" method="Undo"]
 [connection signal="pressed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CenterContainer4/HBoxContainer/Redo" to="Area2D/Image" method="Redo"]
 [connection signal="file_selected" from="Export" to="Area2D/Image" method="Save"]
