@@ -529,7 +529,7 @@ H = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxCo
 S = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/Saturation/Control/TextureRect/Saturation")
 V = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/Value/Control/TextureRect/Value")
 ColorDisplay = NodePath("../../Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/BG/Color Display")
-UiBounds = [NodePath("../../Panel"), NodePath("../../Panel2")]
+UiBounds = [NodePath("../../Panel"), NodePath("../../Panel2"), NodePath("../../New"), NodePath("../../New/Control/Create New Image"), NodePath("../../Resize"), NodePath("../../Resize/Control/Crop"), NodePath("../../Resize/Control/Resize")]
 FileMenuButton = NodePath("../../Panel2/MarginContainer/ScrollContainer/HBoxContainer/MenuButton")
 ExportMenu = NodePath("../../Export")
 LoadMenu = NodePath("../../Load")
@@ -656,6 +656,95 @@ offset_top = 81.0
 offset_right = 400.0
 offset_bottom = 111.0
 text = "Create New Image"
+
+[node name="Resize" type="PanelContainer" parent="." unique_id=251960767]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -81.45999
+offset_right = 200.0
+offset_bottom = 80.54004
+
+[node name="Control" type="Control" parent="Resize" unique_id=1114777366]
+layout_mode = 2
+
+[node name="Left" type="Label" parent="Resize/Control" unique_id=428243512]
+layout_mode = 0
+offset_right = 62.0
+offset_bottom = 22.0
+text = "Left X:"
+
+[node name="-X" type="LineEdit" parent="Resize/Control" unique_id=1755419683]
+layout_mode = 0
+offset_left = 93.0
+offset_right = 392.0
+offset_bottom = 30.0
+text = "0"
+
+[node name="Top" type="Label" parent="Resize/Control" unique_id=677222433]
+layout_mode = 0
+offset_top = 41.0
+offset_right = 192.0
+offset_bottom = 63.0
+text = "Top Y:"
+
+[node name="-Y" type="LineEdit" parent="Resize/Control" unique_id=2048176212]
+layout_mode = 0
+offset_left = 93.0
+offset_top = 41.0
+offset_right = 392.0
+offset_bottom = 71.0
+text = "0"
+
+[node name="Right" type="Label" parent="Resize/Control" unique_id=1954764945]
+layout_mode = 0
+offset_top = 81.00003
+offset_right = 62.0
+offset_bottom = 103.00003
+text = "Right  X:"
+
+[node name="+X" type="LineEdit" parent="Resize/Control" unique_id=982898514]
+layout_mode = 0
+offset_left = 93.0
+offset_top = 81.00003
+offset_right = 392.0
+offset_bottom = 111.00003
+text = "0"
+
+[node name="Bottom" type="Label" parent="Resize/Control" unique_id=1064180345]
+layout_mode = 0
+offset_top = 122.00003
+offset_right = 90.0
+offset_bottom = 144.00003
+text = "Bottom Y:"
+
+[node name="+Y" type="LineEdit" parent="Resize/Control" unique_id=2000216197]
+layout_mode = 0
+offset_left = 93.0
+offset_top = 122.00003
+offset_right = 392.0
+offset_bottom = 152.00003
+text = "0"
+
+[node name="Crop" type="Button" parent="Resize/Control" unique_id=1371253445]
+layout_mode = 0
+offset_top = 162.0
+offset_right = 200.0
+offset_bottom = 192.0
+text = "Crop"
+
+[node name="Resize" type="Button" parent="Resize/Control" unique_id=1844655283]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 162.0
+offset_right = 400.0
+offset_bottom = 192.0
+text = "Resize"
 
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer/Red" to="Area2D/Image" method="SliderChanger"]
 [connection signal="value_changed" from="Panel/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer/Green" to="Area2D/Image" method="SliderChanger"]

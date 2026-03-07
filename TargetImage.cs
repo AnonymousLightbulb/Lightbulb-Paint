@@ -136,7 +136,7 @@ public partial class TargetImage : Sprite2D
     [Export] public ColorRect ColorDisplay;
     public bool ColorChanged;
     //[Export] public Godot.Range LayerSelector;
-    [Export] public Panel[] UiBounds;
+    [Export] public Control[] UiBounds;
     [Export] public MenuButton FileMenuButton;
     [Export] public FileDialog ExportMenu;
     [Export] public FileDialog LoadMenu;
@@ -148,6 +148,9 @@ public partial class TargetImage : Sprite2D
     [Export] public LineEdit NewX;
     [Export] public LineEdit NewY;
     [Export] Vector2 ClickOffset;
+
+    public List<Image> LayerThumbnails = [];
+    public List<Texture2D> LayerTextures = [];
 
     public void FileMenu(long Button)
     {
@@ -219,6 +222,8 @@ public partial class TargetImage : Sprite2D
         ResizeImage();
         Texture = ImageTexture.CreateFromImage(DisplayImage);
         (BG.GetParent() as ColorRect).Size = Texture.GetSize() * Scale;
+        LayerThumbnails.Add(Image.CreateEmpty(Size.X, Size.Y, false, Image.Format.Rgba8));
+
 
         Input.ActionPress("Maximize");
     }
@@ -227,32 +232,35 @@ public partial class TargetImage : Sprite2D
         Texture2D asdf = Texture;
         foreach (Vector2I item in EditableImage.UpdatedPixels)
         {
-            Godot.Color Under = new((float)EditableImage.Layers[0].Pixels[item].R / 255, (float)EditableImage.Layers[0].Pixels[item].G / 255, (float)EditableImage.Layers[0].Pixels[item].B / 255, (float)EditableImage.Layers[0].Pixels[item].A / 255);
-            if (EditableImage.Layers.Count > 1)
+            Godot.Color Under = new(0, 0, 0, 0);
+            for (int Layer = 0; Layer < EditableImage.Layers.Count; Layer++)
             {
-                for (int Layer = 1; Layer < EditableImage.Layers.Count; Layer++)
+                if (EditableImage.Layers[Layer].Hidden == false)
                 {
-                    if (EditableImage.Layers[Layer].Hidden == false)
+                    Godot.Color Over = new((float)EditableImage.Layers[Layer].Pixels[item].R / 255f, (float)EditableImage.Layers[Layer].Pixels[item].G / 255f, (float)EditableImage.Layers[Layer].Pixels[item].B / 255f, (float)EditableImage.Layers[Layer].Pixels[item].A / 255f);
+                    if (!Mathf.IsEqualApprox(Over.A, 0))
                     {
-                        Godot.Color Over = new((float)EditableImage.Layers[Layer].Pixels[item].R / 255f, (float)EditableImage.Layers[Layer].Pixels[item].G / 255f, (float)EditableImage.Layers[Layer].Pixels[item].B / 255f, (float)EditableImage.Layers[Layer].Pixels[item].A / 255f);
-                        if (!Mathf.IsEqualApprox(Over.A, 0))
-                        {
-                            float Alpha = Over.A + Under.A * (1 - Over.A);
-                            float Red = (Over.R * Over.A + Under.R * Under.A * (1 - Over.A)) / Alpha;
-                            float Green = (Over.G * Over.A + Under.G * Under.A * (1 - Over.A)) / Alpha;
-                            float Blue = (Over.B * Over.A + Under.B * Under.A * (1 - Over.A)) / Alpha;
-                            Under = new(Red, Green, Blue, Alpha);
-                        }
+                        float Alpha = Over.A + Under.A * (1 - Over.A);
+                        float Red = (Over.R * Over.A + Under.R * Under.A * (1 - Over.A)) / Alpha;
+                        float Green = (Over.G * Over.A + Under.G * Under.A * (1 - Over.A)) / Alpha;
+                        float Blue = (Over.B * Over.A + Under.B * Under.A * (1 - Over.A)) / Alpha;
+                        Under = new(Red, Green, Blue, Alpha);
                     }
                 }
+                LayerThumbnails[Layer].SetPixelv(item, new(EditableImage.Layers[Layer].Pixels[item].R / 255f, EditableImage.Layers[Layer].Pixels[item].G / 255f, EditableImage.Layers[Layer].Pixels[item].B / 255f, EditableImage.Layers[Layer].Pixels[item].A / 255f));
             }
-            // foreach (var item in collection)
-            // {
-
-            // }
-            // GD.Print("Final");
             DisplayImage.SetPixelv(item, Under);
         }
+        int MaxLayer = EditableImage.Layers.Count;
+        int CurrentLayer = LayerList.GetSelectedItems()[0];
+        LayerList.Clear();
+        LayerTextures = [];
+        for (int Layer = 0; Layer < MaxLayer; Layer++)
+        {
+            LayerTextures.Add(ImageTexture.CreateFromImage(LayerThumbnails[Layer]));
+            LayerList.AddItem($"Layer {Layer}", LayerTextures[Layer]);
+        }
+        LayerList.Select(CurrentLayer);
         EditableImage.UpdatedPixels = [];
         Texture = ImageTexture.CreateFromImage(DisplayImage);
         asdf.Dispose();
@@ -481,7 +489,6 @@ public partial class TargetImage : Sprite2D
     }
     public void DrawLine(Vector2 EndPos, Vector2 CurrentPos)
     {
-        NextHistoryAction.Layer = LayerList.GetSelectedItems()[0];
         Vector2 TargetPosition = EndPos;
         Vector2I RealTargetPixel = new(Mathf.RoundToInt(TargetPosition.X), Mathf.RoundToInt(TargetPosition.Y));
         Vector2I TargetPixel = RealTargetPixel;
@@ -490,9 +497,9 @@ public partial class TargetImage : Sprite2D
         {
             Vector2 Posit = ToGlobal(new(CurrentPos.X - EditableImage.TopLeft.X - (EditableImage.BottomRight.X / 2), CurrentPos.Y - EditableImage.TopLeft.Y - (EditableImage.BottomRight.Y / 2)));
             bool Blocked = false;
-            foreach (Panel item in UiBounds)
+            foreach (Control item in UiBounds)
             {
-                if (Posit.X > item.GlobalPosition.X && Posit.X < item.GlobalPosition.X + item.Size.X && Posit.Y > item.GlobalPosition.Y && Posit.Y < item.GlobalPosition.Y + item.Size.Y)
+                if (item.Visible == true && Posit.X > item.GlobalPosition.X && Posit.X < item.GlobalPosition.X + item.Size.X && Posit.Y > item.GlobalPosition.Y && Posit.Y < item.GlobalPosition.Y + item.Size.Y)
                 {
                     Blocked = true;
                     Drawing = false;
@@ -702,7 +709,8 @@ public partial class TargetImage : Sprite2D
     public void AddLayer()
     {
         EditableImage.AddLayer(Mathf.RoundToInt(LayerList.GetSelectedItems()[0] + 1), new());
-        LayerList.AddItem($"{LayerList.ItemCount}");
+        LayerThumbnails.Add(Image.CreateEmpty(Size.X, Size.Y, false, Image.Format.Rgba8));
+        RefreshImage();
     }
     public void RemoveLayer()
     {
@@ -712,7 +720,6 @@ public partial class TargetImage : Sprite2D
             {
                 LayerList.Select(LayerList.GetSelectedItems()[0] - 1);
             }
-            LayerList.RemoveItem(LayerList.ItemCount - 1);
             EditableImage.RemoveLayer(LayerList.GetSelectedItems()[0]);
             RefreshImage();
         }
