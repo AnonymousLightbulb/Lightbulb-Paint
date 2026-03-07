@@ -721,6 +721,7 @@ public partial class TargetImage : Sprite2D
                 LayerList.Select(LayerList.GetSelectedItems()[0] - 1);
             }
             EditableImage.RemoveLayer(LayerList.GetSelectedItems()[0]);
+            LayerThumbnails.RemoveAt(LayerList.GetSelectedItems()[0]);
             RefreshImage();
         }
     }
