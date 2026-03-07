@@ -269,7 +269,7 @@ public partial class TargetImage : Sprite2D
         {
             LayerList.AddItem($"Layer {Layer}", LayerTextures[Layer]);
         }
-        LayerList.Select(CurrentLayer);
+        LayerList.Select(Mathf.Clamp(CurrentLayer, 0, EditableImage.Layers.Count() - 1));
         EditableImage.UpdatedPixels = [];
         Texture = ImageTexture.CreateFromImage(DisplayImage);
         asdf.Dispose();
@@ -746,9 +746,8 @@ public partial class TargetImage : Sprite2D
     {
         if (EditableImage.Layers.Count > 1)
         {
-
-            EditableImage.RemoveLayer((EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]);
             LayerThumbnails.RemoveAt((EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]);
+            EditableImage.RemoveLayer((EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]);
             RefreshImage();
         }
     }
