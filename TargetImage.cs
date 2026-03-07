@@ -652,22 +652,34 @@ public partial class TargetImage : Sprite2D
     }
     public override void _Input(InputEvent @event)
     {
-        if (@event is InputEventMouseMotion && Input.IsActionPressed("Move"))
+        Vector2 Posit = GetGlobalMousePosition();
+        bool Blocked = false;
+        foreach (Control item in UiBounds)
         {
-            (GetParent() as Node2D).Position += (@event as InputEventMouseMotion).Relative;
+            if (item.IsVisibleInTree() == true && Posit.X > item.GlobalPosition.X && Posit.X < item.GlobalPosition.X + item.Size.X && Posit.Y > item.GlobalPosition.Y && Posit.Y < item.GlobalPosition.Y + item.Size.Y)
+            {
+                Blocked = true;
+            }
         }
-        else if (@event is InputEventMouseButton)
+        if (Blocked == false)
         {
-            float Multiplier = 1;
-            if (Size.X > Size.Y)
+            if (@event is InputEventMouseMotion && Input.IsActionPressed("Move"))
             {
-                Multiplier = 1024 / Size.X;
+                (GetParent() as Node2D).Position += (@event as InputEventMouseMotion).Relative;
             }
-            else
+            else if (@event is InputEventMouseButton)
             {
-                Multiplier = 1024 / Size.Y;
+                float Multiplier = 1;
+                if (Size.X > Size.Y)
+                {
+                    Multiplier = 1024 / Size.X;
+                }
+                else
+                {
+                    Multiplier = 1024 / Size.Y;
+                }
+                ZoomIn = Mathf.Clamp(ZoomIn + (Input.GetAxis("Zoom Out", "Zoom In") * 0.05f * Multiplier), 0.05f, float.PositiveInfinity);
             }
-            ZoomIn = Mathf.Clamp(ZoomIn + (Input.GetAxis("Zoom Out", "Zoom In") * 0.05f * Multiplier), 0.05f, float.PositiveInfinity);
         }
         base._Input(@event);
     }
