@@ -738,8 +738,15 @@ public partial class TargetImage : Sprite2D
     }
     public void AddLayer()
     {
-        EditableImage.AddLayer(Mathf.RoundToInt(((EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]) + 1), new());
-        LayerThumbnails.Add(Image.CreateEmpty(Size.X, Size.Y, false, Image.Format.Rgba8));
+        EditableImage.AddLayer(((EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0] + 1), new());
+        if ((EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0] >= EditableImage.Layers.Count() - 1)
+        {
+            LayerThumbnails.Add(Image.CreateEmpty(Size.X, Size.Y, false, Image.Format.Rgba8));
+        }
+        else
+        {
+            LayerThumbnails.Insert((EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0], Image.CreateEmpty(Size.X, Size.Y, false, Image.Format.Rgba8));
+        }
         RefreshImage();
     }
     public void RemoveLayer()
