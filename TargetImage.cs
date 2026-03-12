@@ -81,25 +81,37 @@ public partial class TargetImage : Sprite2D
             }
         }
 
-        public List<List<List<int>>> SavePixels()
+        public SavedProject Save()
         {
-            List<List<List<int>>> ToReturn = new();
-            for (int Layer = 0; Layer < Layers.Count; Layer++)
-            {
-                ToReturn.Add(new());
-                for (int Y = 0; Y < GetSize().Y; Y++)
-                {
-                    ToReturn[Layer].Add(new());
-                    for (int X = 0; X < GetSize().X; X++)
-                    {
-                        ToReturn[Layer][Y].Add(Layers[Layer].Pixels[new(X, Y)].ToArgb());
-                        GD.Print(System.Drawing.ColorTranslator.ToHtml(Layers[Layer].Pixels[new(X, Y)]));
-                    }
-                }
-            }
-            return ToReturn;
+            var asdf = new SavedProject();
+            asdf.Pixels = SavedProject.SavePixels(this);
+            return asdf;
         }
 
+        public class SavedProject()
+        {
+            public int Version = 1;
+            public List<List<List<int>>> Pixels;
+
+            public static List<List<List<int>>> SavePixels(ImageData ToSave)
+            {
+                List<List<List<int>>> ToReturn = new();
+                for (int Layer = 0; Layer < ToSave.Layers.Count; Layer++)
+                {
+                    ToReturn.Add(new());
+                    for (int Y = 0; Y < ToSave.GetSize().Y; Y++)
+                    {
+                        ToReturn[Layer].Add(new());
+                        for (int X = 0; X < ToSave.GetSize().X; X++)
+                        {
+                            ToReturn[Layer][Y].Add(ToSave.Layers[Layer].Pixels[new(X, Y)].ToArgb());
+                            GD.Print(System.Drawing.ColorTranslator.ToHtml(ToSave.Layers[Layer].Pixels[new(X, Y)]));
+                        }
+                    }
+                }
+                return ToReturn;
+            }
+        }
     }
     public struct FillCommand(Vector2I Posit, Color Replaceable)
     {
@@ -222,7 +234,7 @@ public partial class TargetImage : Sprite2D
                 IncludeFields = true
             };
             using var file = FileAccess.Open(FilePath, FileAccess.ModeFlags.WriteRead);
-            file.StoreString(JsonSerializer.Serialize(EditableImage.SavePixels(), options));
+            file.StoreString(JsonSerializer.Serialize(EditableImage.Save(), options));
 
         }
         // DisplayImage.Save
@@ -255,23 +267,21 @@ public partial class TargetImage : Sprite2D
                 IncludeFields = true
             };
             using var file = FileAccess.Open(FilePath, FileAccess.ModeFlags.Read);
-            List<List<List<int>>> Deserialized = JsonSerializer.Deserialize<List<List<List<int>>>>(file.GetAsText(), options);
-            Size = new(Deserialized[0][0].Count, Deserialized[0].Count);
-            NewFromSize();
-            while (EditableImage.Layers.Count < Deserialized.Count)
+            ImageData.SavedProject Deserialized = JsonSerializer.Deserialize<ImageData.SavedProject>(file.GetAsText(), options);
+            Size = new(Deserialized.Pixels[0][0].Count, Deserialized.Pixels[0].Count);
+            GenerateBlank();
+            while (EditableImage.Layers.Count < Deserialized.Pixels.Count)
             {
                 AddLayer();
             }
-            for (int Layer = 0; Layer < Deserialized.Count; Layer++)
+            for (int Layer = 0; Layer < Deserialized.Pixels.Count; Layer++)
             {
-                for (int Y = 0; Y < Deserialized[Layer].Count; Y++)
+                for (int Y = 0; Y < Deserialized.Pixels[Layer].Count; Y++)
                 {
-                    for (int X = 0; X < Deserialized[Layer][Y].Count; X++)
+                    for (int X = 0; X < Deserialized.Pixels[Layer][Y].Count; X++)
                     {
-
-                        EditableImage.Layers[Layer].Pixels[new(X, Y)] = Color.FromArgb(Deserialized[Layer][Y][X]);
+                        EditableImage.Layers[Layer].Pixels[new(X, Y)] = Color.FromArgb(Deserialized.Pixels[Layer][Y][X]);
                         EditableImage.UpdatedPixels.Add(new(X, Y));
-                        GD.Print($"{Layer} {Y} {X} {Deserialized[Layer][Y][X]}");
                     }
                 }
             }

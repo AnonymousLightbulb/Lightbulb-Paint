@@ -758,16 +758,30 @@ offset_right = 400.0
 offset_bottom = 192.0
 text = "Resize"
 
-[node name="OptionButton" type="OptionButton" parent="Resize/Control" unique_id=367807752]
+[node name="Resize Algorithm" type="OptionButton" parent="Resize/Control" unique_id=1938591677]
 layout_mode = 0
 offset_left = 250.0
-offset_top = 41.0
+offset_top = 41.00003
 offset_right = 393.0
-offset_bottom = 71.0
+offset_bottom = 71.00003
 selected = 0
 item_count = 2
 popup/item_0/text = "Nearest"
 popup/item_0/id = 0
+popup/item_1/id = 1
+
+[node name="Postioning Type" type="OptionButton" parent="Resize/Control" unique_id=367807752]
+layout_mode = 0
+offset_left = 250.0
+offset_top = 81.00003
+offset_right = 393.0
+offset_bottom = 111.00003
+selected = 0
+item_count = 2
+popup/item_0/text = "Absolute"
+popup/item_0/id = 0
+popup/item_0/separator = true
+popup/item_1/text = "Relative"
 popup/item_1/id = 1
 
 [node name="Exit" type="Button" parent="Resize/Control" unique_id=1793224585]
