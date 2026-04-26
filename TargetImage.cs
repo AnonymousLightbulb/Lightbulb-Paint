@@ -540,6 +540,8 @@ public partial class TargetImage : Sprite2D
         }
         if (Input.IsActionJustReleased("Draw") && NextHistoryAction.Data.Count > 0)
         {
+            NextHistoryAction.Layer = (EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0];
+            GD.Print(NextHistoryAction.Layer);
             EditableImage.History.Add((NextHistoryAction));
             NextHistoryAction = new();
         }
@@ -782,8 +784,9 @@ public partial class TargetImage : Sprite2D
                 asdf.Layer = EditableImage.History.Last().Layer;
                 foreach (var item in (EditableImage.History.Last() as DrawHistory).Data)
                 {
-                    asdf.Data.Add(item.Key, EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[item.Key]);
+                    asdf.Data.Add(item.Key, EditableImage.Layers[EditableImage.History.Last().Layer].Pixels[item.Key]);
                     EditableImage.Layers[EditableImage.History.Last().Layer].Pixels[item.Key] = item.Value;
+                    GD.Print(new Vector3(item.Key.X, item.Key.Y, EditableImage.History.Last().Layer));
                     EditableImage.UpdatedPixels.Add(item.Key);
                 }
                 RefreshImage();
@@ -802,7 +805,7 @@ public partial class TargetImage : Sprite2D
                 asdf.Layer = EditableImage.RedoActions[0].Layer;
                 foreach (var item in (EditableImage.RedoActions[0] as DrawHistory).Data)
                 {
-                    asdf.Data.Add(item.Key, EditableImage.Layers[(EditableImage.Layers.Count() - 1) - LayerList.GetSelectedItems()[0]].Pixels[item.Key]);
+                    asdf.Data.Add(item.Key, EditableImage.Layers[EditableImage.RedoActions[0].Layer].Pixels[item.Key]);
                     EditableImage.Layers[EditableImage.RedoActions[0].Layer].Pixels[item.Key] = item.Value;
                     EditableImage.UpdatedPixels.Add(item.Key);
                 }
