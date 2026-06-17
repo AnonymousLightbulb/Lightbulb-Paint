@@ -28,6 +28,10 @@ window/size/viewport_height=1024
 
 project/assembly_name="LX Paint"
 
+[global_group]
+
+Obstructors=""
+
 [gui]
 
 theme/custom_font="uid://bitppo48i6e0o"

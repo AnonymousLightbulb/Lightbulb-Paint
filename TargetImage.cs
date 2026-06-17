@@ -11,7 +11,7 @@ public partial class TargetImage : Sprite2D
     public Vector2I Size = new(15, 15);
     public struct ImageData(Vector2I Dimesions, Vector2I Start)
     {
-        public struct DataLayer()
+        public class DataLayer()
         {
             public enum BlendMode
             {
@@ -792,6 +792,10 @@ public partial class TargetImage : Sprite2D
                 RefreshImage();
                 EditableImage.History.RemoveAt(EditableImage.History.Count - 1);
                 EditableImage.RedoActions.Add(asdf);
+            }
+            else if (EditableImage.History.Last() is LayerHistory)
+            {
+
             }
         }
     }

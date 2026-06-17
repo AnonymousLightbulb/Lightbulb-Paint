@@ -2,6 +2,7 @@
 
 [ext_resource type="FontFile" uid="uid://dmhoac8r5blvm" path="res://pixeloid/PixeloidSans.otf" id="1_3dxm6"]
 [ext_resource type="Texture2D" uid="uid://12xbrrqcgejp" path="res://BG.png" id="1_glv2v"]
+[ext_resource type="Script" uid="uid://bc5h6r0maxpf2" path="res://InputManager.cs" id="2_03owx"]
 [ext_resource type="Script" uid="uid://2pplbelnrtee" path="res://NumericSlider.cs" id="2_r0du0"]
 [ext_resource type="Script" uid="uid://bg2gduwoimr38" path="res://TargetImage.cs" id="2_uu6xs"]
 [ext_resource type="Texture2D" uid="uid://dmq1x1tqds5fc" path="res://Save.png" id="4_cm0pq"]
@@ -94,6 +95,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_lgr22")
+script = ExtResource("2_03owx")
 
 [node name="Mask" type="ColorRect" parent="." unique_id=27671065]
 clip_children = 1
@@ -106,8 +108,8 @@ offset_bottom = 811.0
 [node name="BG" type="NinePatchRect" parent="Mask" unique_id=135397315]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.002
-anchor_right = 1.002
+anchor_left = 0.004
+anchor_right = 1.004
 anchor_bottom = 1.0
 offset_left = -537.0
 offset_top = -311.0
@@ -590,15 +592,17 @@ popup/item_2/id = 2
 layout_mode = 2
 text = "Edit"
 
-[node name="Export" type="FileDialog" parent="." unique_id=2090656461]
+[node name="Export" type="FileDialog" parent="." unique_id=2090656461 groups=["Obstructors"]]
+process_mode = 3
 oversampling_override = 1.0
 initial_position = 1
 size = Vector2i(684, 360)
 access = 2
 filters = PackedStringArray("*.lbp", "*.png", "*.jpeg", "*.webp", "*.dds", "*.exr")
-use_native_dialog = true
+show_hidden_files = true
 
-[node name="Load" type="FileDialog" parent="." unique_id=837597016]
+[node name="Load" type="FileDialog" parent="." unique_id=837597016 groups=["Obstructors"]]
+process_mode = 3
 oversampling_override = 1.0
 title = "Open a File"
 initial_position = 1
@@ -606,7 +610,7 @@ size = Vector2i(684, 360)
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.lbp", "*.png", "*.jpeg", "*.webp", "*.dds", "*.exr")
-use_native_dialog = true
+show_hidden_files = true
 
 [node name="New" type="PanelContainer" parent="." unique_id=2013941264]
 visible = false
